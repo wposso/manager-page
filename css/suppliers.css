@@ -1,0 +1,80 @@
+.s_table_container {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 0px;
+  padding-right: 10px;
+}
+
+.s_table tbody {
+  height: 300px; /* Altura visible del área scroll */
+  overflow-y: auto;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.buttons input[type="search"] {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 9px 10px;
+  min-width: 415px;
+  margin-right: 55px;
+}
+
+.buttons input[type="search"]:focus {
+  border-color: #0066cc;
+  outline: none;
+}
+
+.buttons input[type="button"] {
+  border-radius: 5px;
+  border: none;
+  padding: 9px 10px;
+  background-color: rgb(23, 183, 23);
+  color: white;
+  margin-left: 8px;
+  width: 100px;
+  cursor: pointer;
+}
+
+.s_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.s_table th,
+.s_table td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.s_table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  color: #333;
+}
+
+.s_table tr:hover {
+  background-color: #f5faff;
+}
+
+.buttons .x input[type="button"] {
+  border-radius: 5px;
+  border: none;
+  padding: 9px 10px;
+  background-color: #0066cc;
+  color: white;
+  margin-left: 8px;
+  width: 100px;
+  cursor: pointer;
+}

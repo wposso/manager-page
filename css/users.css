@@ -1,0 +1,42 @@
+.u-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.u-table th,
+.u-table td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.u-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  color: #333;
+}
+
+.u-table tr:hover {
+  background-color: #f5faff;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.row input[type="search"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 450px;
+}
+
+.row input[type="search"]:focus {
+    border: 1px solid #0066cc;
+     border-color: #0066cc;
+}
