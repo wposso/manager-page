@@ -6,7 +6,7 @@ body {
   /* font-family: sans-serif; */
   font-family: Arial;
   overflow: hidden;
-  background-color: rgb(243, 239, 239);
+  /* background-color: rgb(243, 239, 239); */
 }
 
 header {
@@ -96,7 +96,7 @@ header i {
   border-radius: 5px;
   border: none;
   padding: 9px 10px;
-  background-color: rgb(23, 183, 23);
+  background-color: #28a745;
   color: white;
   margin-left: 8px;
   width: 100px;

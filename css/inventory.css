@@ -1,16 +1,16 @@
-.m_table_container {
+.i_table_container {
   flex: 1;
   overflow-y: auto;
   margin-top: 0px;
   padding-right: 10px;
 }
 
-.m_table tbody {
+.i_table tbody {
   height: 300px; /* Altura visible del área scroll */
   overflow-y: auto;
 }
 
-.m_buttons {
+.i_buttons {
   display: flex;
   align-items: center;
   /* justify-content: space-between; */
@@ -18,7 +18,7 @@
   margin-bottom: 15px;
 }
 
-.m_buttons input[type="search"] {
+.i_buttons input[type="search"] {
   border-radius: 5px;
   border: 1px solid #ddd;
   padding: 9px 10px;
@@ -26,12 +26,12 @@
   margin-right: 55px;
 }
 
-.m_buttons input[type="search"]:focus {
+.i_buttons input[type="search"]:focus {
   border-color: #0066cc;
   outline: none;
 }
 
-.m_buttons input[type="button"] {
+.i_buttons input[type="button"] {
   border-radius: 5px;
   border: none;
   padding: 9px 10px;
@@ -42,7 +42,7 @@
   cursor: pointer;
 }
 
-.m_table {
+.i_table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -51,24 +51,24 @@
   overflow: hidden;
 }
 
-.m_table th,
-.m_table td {
+.i_table th,
+.i_table td {
   padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
 
-.m_table th {
+.i_table th {
   background-color: #f2f2f2;
   font-weight: 600;
   color: #333;
 }
 
-.m_table tr:hover {
+.i_table tr:hover {
   background-color: #f5faff;
 }
 
-.m_buttons .x input[type="button"] {
+.i_buttons .x input[type="button"] {
   border-radius: 5px;
   border: none;
   padding: 9px 10px;
@@ -78,3 +78,4 @@
   width: 100px;
   cursor: pointer;
 }
+

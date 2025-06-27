@@ -79,7 +79,7 @@
     }
 
     .btn-exportar {
-        background-color: rgb(23, 183, 23);
+        background-color: #28a745;
     }
 
     .btn-generar:hover {
@@ -87,7 +87,7 @@
     }
 
     .btn-exportar:hover {
-        background-color: rgb(20, 155, 20);
+        background-color: #28a745;
     }
 
     .alert-screen {

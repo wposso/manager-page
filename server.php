@@ -73,7 +73,7 @@
             <i class="fa-solid fa-calendar-check"></i> Novedades
         </a>
 
-        <a href="#Cerrar sesión">
+        <a href="#Cerrar sesión" onclick="window.location.href='./views/loginview.php'">
             <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
         </a>
     </nav>
@@ -84,43 +84,13 @@
     </div>
 
     </div>
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="form-scroll">
-                <div class="form-container">
-                    <h2>Añadir registro</h2>
-                    <form id="form-inventario" action="./controller/inventorycontroller.php" class="form-content"
-                        method="post">
-                        <label for="name">Nombre</label>
-                        <input type="text" id="name" name="name" placeholder="Ingrese el nombre">
 
-                        <label for="category">Categoría</label>
-                        <input type="text" id="category" name="category" placeholder="Ingrese la categoría">
-
-                        <label for="price">Precio</label>
-                        <input type="text" id="price" name="price" placeholder="Ingrese el precio">
-
-                        <label for="unit">Unidad</label>
-                        <input type="text" id="unit" name="unit" placeholder="Ingrese la unidad">
-
-                        <label for="stock">Stock</label>
-                        <input type="text" id="stock" name="stock" placeholder="Ingrese el stock">
-
-                        <label for="description">Descripción</label>
-                        <input type="text" id="description" name="description" placeholder="Ingrese la descripción">
-
-                        <input type="submit" value="Guardar Registro" class="btn-submit">
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <footer>
         <p>@ 2025 derechos reservados | by dobleu</p>
     </footer>
     <script src="./javascript/handlelayout.js"></script>
+    <script src="./javascript/modal.js"></script>
     <script>
 
         function toggleSubmenu(event) {
@@ -136,49 +106,6 @@
                 submenu.style.display = 'none';
                 group.classList.remove('active');
             }
-        }
-
-
-        // ----- MODAL -----
-        const modal = document.getElementById("myModal");
-        const openBtn = document.getElementById("openModalBtn");
-        const closeBtn = document.querySelector(".close");
-
-        if (openBtn && closeBtn && modal) {
-            openBtn.onclick = () => modal.style.display = "block";
-            closeBtn.onclick = () => modal.style.display = "none";
-            window.onclick = (e) => {
-                if (e.target === modal) modal.style.display = "none";
-            };
-        }
-
-        // ----- FORMULARIO INVENTARIO -----
-        const formInventario = document.getElementById("form-inventario");
-        if (formInventario) {
-            formInventario.addEventListener("submit", function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-
-                fetch("./controller/inventorycontroller.php", {
-                    method: "POST",
-                    body: formData
-                })
-                    .then(async res => {
-                        if (!res.ok) throw new Error("Error en la respuesta del servidor");
-                        const data = await res.json();
-                        alert(data.message);
-                        if (data.success) {
-                            this.reset();
-                            if (typeof cargarTablaInventario === "function") {
-                                cargarTablaInventario();
-                            }
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Error inesperado al enviar el formulario.");
-                    });
-            });
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
