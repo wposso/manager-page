@@ -15,7 +15,7 @@ $response = handlesuppliers();
 
     <h2>Proveedores</h2>
 
-    <div class="buttons">
+    <div class="s_buttons">
         <input type="search" name="searchbar" placeholder="Buscar proveedor...">
         <div class="x">
             <input type="button" value="Opciones">

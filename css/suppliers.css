@@ -10,7 +10,7 @@
   overflow-y: auto;
 }
 
-.buttons {
+.s_buttons {
   display: flex;
   align-items: center;
   /* justify-content: space-between; */
@@ -18,7 +18,7 @@
   margin-bottom: 15px;
 }
 
-.buttons input[type="search"] {
+.s_buttons input[type="search"] {
   border-radius: 5px;
   border: 1px solid #ddd;
   padding: 9px 10px;
@@ -26,12 +26,12 @@
   margin-right: 55px;
 }
 
-.buttons input[type="search"]:focus {
+.s_buttons input[type="search"]:focus {
   border-color: #0066cc;
   outline: none;
 }
 
-.buttons input[type="button"] {
+.s_buttons input[type="button"] {
   border-radius: 5px;
   border: none;
   padding: 9px 10px;
@@ -68,7 +68,7 @@
   background-color: #f5faff;
 }
 
-.buttons .x input[type="button"] {
+.s_buttons .x input[type="button"] {
   border-radius: 5px;
   border: none;
   padding: 9px 10px;
