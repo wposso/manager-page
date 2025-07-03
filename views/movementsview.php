@@ -5,10 +5,9 @@ $x = handlemovements(); ?>
 <h2>Movimientos</h2>
 <div class="m_buttons">
     <input type="search" name="searchbar" id="" placeholder="Buscar Movimientos...">
-    <div class="x">
-        <input type="button" value="Opciones">
-    </div>
     <input type="button" value="Exportar PDF">
+    <input type="button" value="Exportar CVS">
+    <input type="button" value="Imprimir">
 </div>
 <div class="m_table_container">
     <table class="m_table">

@@ -3,32 +3,35 @@ require_once __DIR__ . "/../controller/inventorycontroller.php";
 $users = getAllProducts();
 ?>
 <link rel="stylesheet" href="./css/inventory.css">
+
 <h2>Inventario General</h2>
+
 <div class="i_buttons">
     <input type="search" name="search" placeholder="Buscar producto...">
     <div class="dropdown">
         <button class="dropdown-button">Opciones</button>
         <div class="dropdown-content">
-            <a href="#" id="openModalBtn">Añadir registro</a>
-            <a href="#">Editar registro</a>
-            <a href="#">Eliminar registro</a>
+            <a href="#" onclick="openModal('addModal')">Añadir registro</a>
+            <!-- <a href="#" onclick="openModal('editModal')">Editar registro</a> -->
+            <a href="#" onclick="openModal('deleteModal')">Eliminar registro</a>
         </div>
     </div>
     <input type="button" value="Exportar PDF">
     <input type="button" value="Exportar CSV">
     <input type="button" value="Imprimir">
 </div>
+
 <div class="i_table_container">
     <table class="i_table">
         <thead>
             <tr>
-                <th>id</th>
-                <th>nombre</th>
-                <th>categoria</th>
-                <th>precio</th>
-                <th>unidad</th>
-                <th>stock</th>
-                <th>descripcion</th>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Unidad</th>
+                <th>Stock</th>
+                <th>Descripción</th>
             </tr>
         </thead>
         <tbody>
@@ -45,78 +48,124 @@ $users = getAllProducts();
             <?php endforeach; ?>
         </tbody>
     </table>
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="form-scroll">
-                <div class="form-container">
-                    <h2>Añadir registro</h2>
-                    <form id="form-inventario" action="./controller/inventorycontroller.php" class="form-content"
-                        method="post">
-                        <label for="name">Nombre</label>
-                        <input type="text" id="name" name="name" placeholder="Ingrese el nombre">
+</div>
 
-                        <label for="category">Categoría</label>
-                        <input type="text" id="category" name="category" placeholder="Ingrese la categoría">
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addModal')">&times;</span>
+        <div class="form-container">
+            <h2>Añadir Producto</h2>
+            <form id="add-inventory-form" method="post">
+                <input type="text" name="codigo" placeholder="Código del producto" required>
+                <input type="text" name="nombre" placeholder="Nombre del producto" required>
+                <input type="number" name="cantidad" placeholder="Cantidad" required>
 
-                        <label for="price">Precio</label>
-                        <input type="text" id="price" name="price" placeholder="Ingrese el precio">
+                <select name="categoria_id" required>
+                    <option value="" disabled selected hidden>Categoría</option>
+                </select>
 
-                        <label for="unit">Unidad</label>
-                        <input type="text" id="unit" name="unit" placeholder="Ingrese la unidad">
+                <select name="subcategoria_id" required>
+                    <option value="" disabled selected hidden>Subcategoría</option>
+                </select>
 
-                        <label for="stock">Stock</label>
-                        <input type="text" id="stock" name="stock" placeholder="Ingrese el stock">
+                <select name="proveedor_id" required>
+                    <option value="" disabled selected hidden>Proveedor</option>
+                </select>
 
-                        <label for="description">Descripción</label>
-                        <input type="text" id="description" name="description" placeholder="Ingrese la descripción">
+                <select name="bodega_id" required>
+                    <option value="" disabled selected hidden>Bodega</option>
+                </select>
 
-                        <input type="submit" value="Guardar Registro" class="btn-submit">
-                    </form>
+                <select name="estado" required>
+                    <option value="" disabled selected hidden>Estado</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit">Guardar</button>
+                    <button type="button" onclick="closeModal('addModal')">Cancelar</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
-    <script>
-        // ----- MODAL -----
-        const modal = document.getElementById("myModal");
-        const openBtn = document.getElementById("openModalBtn");
-        const closeBtn = document.querySelector(".close");
+</div>
 
-        if (openBtn && closeBtn && modal) {
-            openBtn.onclick = () => modal.style.display = "block";
-            closeBtn.onclick = () => modal.style.display = "none";
-            window.onclick = (e) => {
-                if (e.target === modal) modal.style.display = "none";
-            };
-        }
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editModal')">&times;</span>
+        <div class="form-container">
+            <h2>Editar Producto</h2>
+            <form id="edit-inventory-form" method="post">
+                <input type="text" name="codigo" placeholder="Código del producto" required>
+                <input type="text" name="nombre" placeholder="Nuevo nombre">
+                <input type="number" name="cantidad" placeholder="Nueva cantidad">
 
-        // ----- FORMULARIO INVENTARIO -----
-        const formInventario = document.getElementById("form-inventario");
-        if (formInventario) {
-            formInventario.addEventListener("submit", function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
+                <select name="categoria_id">
+                    <option value="" disabled selected hidden>Categoría</option>
+                </select>
 
-                fetch("./controller/inventorycontroller.php", {
-                    method: "POST",
-                    body: formData
-                })
-                    .then(async res => {
-                        if (!res.ok) throw new Error("Error en la respuesta del servidor");
-                        const data = await res.json();
-                        alert(data.message);
-                        if (data.success) {
-                            this.reset();
-                            if (typeof cargarTablaInventario === "function") {
-                                cargarTablaInventario();
-                            }
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Error inesperado al enviar el formulario.");
-                    });
-            });
-        }
-    </script>
+                <select name="subcategoria_id">
+                    <option value="" disabled selected hidden>Subcategoría</option>
+                </select>
+
+                <select name="proveedor_id">
+                    <option value="" disabled selected hidden>Proveedor</option>
+                </select>
+
+                <select name="bodega_id">
+                    <option value="" disabled selected hidden>Bodega</option>
+                </select>
+
+                <select name="estado">
+                    <option value="" disabled selected hidden>Estado</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit">Actualizar</button>
+                    <button type="button" onclick="closeModal('editModal')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+        <div class="form-container">
+            <h2>Eliminar Producto</h2>
+            <form id="delete-inventory-form" method="post">
+                <input type="text" name="codigo" placeholder="Código del producto" required>
+                <div class="form-actions">
+                    <button type="submit" class="delete">Eliminar</button>
+                    <button type="button" onclick="closeModal('deleteModal')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function (e) {
+        ['addModal', 'editModal', 'deleteModal'].forEach(id => {
+            const modal = document.getElementById(id);
+            if (e.target === modal) modal.style.display = "none";
+        });
+    }
+
+    function toggleDropdown() {
+        const dropdowns = document.querySelectorAll(".dropdown-content");
+        dropdowns.forEach(d => d.classList.toggle("show"));
+    }
+</script>

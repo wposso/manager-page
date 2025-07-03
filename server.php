@@ -91,6 +91,7 @@
     </footer>
     <script src="./javascript/handlelayout.js"></script>
     <script src="./javascript/modal.js"></script>
+    <script src="./javascript/suppliers_modal.js"></script>
     <script>
 
         function toggleSubmenu(event) {

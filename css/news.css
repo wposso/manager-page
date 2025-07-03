@@ -1,21 +1,22 @@
+/* Archivo: css/news.css */
+
+* {
+  font-family: Arial, sans-serif;
+}
+
 .n_table_container {
   flex: 1;
   overflow-y: auto;
-  margin-top: 0px;
+  margin-top: 0;
   padding-right: 10px;
-}
-
-.n_table tbody {
-  height: 300px; /* Altura visible del área scroll */
-  overflow-y: auto;
 }
 
 .n_buttons {
   display: flex;
   align-items: center;
-  /* justify-content: space-between; */
   flex-wrap: wrap;
   margin-bottom: 15px;
+  gap: 10px;
 }
 
 .n_buttons input[type="search"] {
@@ -37,9 +38,51 @@
   padding: 9px 10px;
   background-color: #28a745;
   color: white;
-  margin-left: 8px;
   width: 100px;
   cursor: pointer;
+}
+
+.n_dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.n_dropdown input[type="button"] {
+  background-color: #0066cc;
+  color: white;
+}
+
+.n_dropdown_content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #f9f9f9;
+  min-width: 180px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  border-radius: 6px;
+  padding: 8px 0;
+}
+
+.n_dropdown:hover .n_dropdown_content {
+  display: block;
+}
+
+.n_dropdown_content button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.n_dropdown_content button:hover {
+  background-color: #f1f1f1;
 }
 
 .n_table {
@@ -68,33 +111,20 @@
   background-color: #f5faff;
 }
 
-.n_buttons .n_dropdown input[type="button"] {
-  border-radius: 5px;
-  border: none;
-  padding: 9px 10px;
-  background-color: #0066cc;
-  color: white;
-  margin-left: 8px;
-  width: 100px;
-  cursor: pointer;
-}
-
-/* Estilo general de fondo modal */
 .modal {
-  display: none; /* Oculta por defecto */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscurecido */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   justify-content: center;
   align-items: center;
-  overflow: auto; /* Por si hay mucho contenido */
+  overflow: auto;
 }
 
-/* Contenedor del contenido de la modal */
 .modal-content {
   background-color: #fff;
   padding: 24px;
@@ -102,12 +132,11 @@
   max-width: 500px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  box-sizing: border-box;
   position: relative;
   animation: fadeIn 0.3s ease-in-out;
+  font-family: Arial, sans-serif;
 }
 
-/* Inputs y selectores dentro de la modal */
 .modal-content input,
 .modal-content select {
   width: 100%;
@@ -115,11 +144,10 @@
   margin-bottom: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  box-sizing: border-box;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
-/* Botones dentro de la modal */
 .modal-content button[type="submit"] {
   background-color: #28a745;
   color: white;
@@ -128,7 +156,6 @@
   border-radius: 6px;
   cursor: pointer;
   margin-right: 10px;
-  transition: background-color 0.2s ease;
 }
 
 .modal-content button[type="submit"]:hover {
@@ -142,21 +169,22 @@
   padding: 10px 18px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 .modal-content button[type="button"]:hover {
   background-color: #c82333;
 }
 
-/* Animación suave de entrada */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.form-container h2 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 10px;
 }
