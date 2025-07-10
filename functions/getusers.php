@@ -1,20 +1,17 @@
 <?php
-require_once __DIR__ . "/../database/dbconnection.php";
+require_once __DIR__ . '/../database/dbconnection.php';
+
 function getAllUsersFromDb()
 {
     $conn = db_connect();
+    $usuarios = [];
 
-    if ($conn->connect_error) {
-        return die("Error al conectarse a la base de datos");
+    $query = "SELECT id, nombre, correo as email, rol, creado_en, actualizado_en FROM usuario";
+    $result = $conn->query($query);
+
+    while ($row = $result->fetch_assoc()) {
+        $usuarios[] = $row;
     }
 
-    $response = $conn->query("SELECT id, rol, nombre, email, creado_en, actualizado_en password FROM usuarios");
-    $users = [];
-
-    while ($row = $response->fetch_assoc()) {
-        $users[] = $row;
-    }
-
-    return $users;
+    return $usuarios;
 }
-?>

@@ -6,7 +6,7 @@ function getAllMovementFromDb()
         return die("Error en la conexión");
     }
 
-    $query = $conn->query("SELECT id, tipo, producto, cantidad, fecha, observacion FROM movimientos");
+    $query = $conn->query("SELECT id, tipo, producto, cantidad, fecha, observacion FROM movimiento");
     if ($query == null) {
         return die("Error al obtener datos");
     }

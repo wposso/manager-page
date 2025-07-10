@@ -1,23 +1,21 @@
 <?php
-require_once __DIR__ . "/../database/dbconnection.php";
+require_once __DIR__ . '/../database/dbconnection.php';
 
-function getAllNewsFromDb()
+function getAllNews()
 {
     $conn = db_connect();
-    if ($conn->connect_error) {
-        return die("Error en conexión" . $conn->connect_error);
+    $registros = [];
+
+    $sql = "SELECT n.id, n.titulo, n.descripcion, n.fecha, n.tipo, b.nombre as bodega
+            FROM novedad n
+            LEFT JOIN bodega b ON n.bodega_id = b.id
+            ORDER BY n.fecha DESC";
+
+    $result = $conn->query($sql);
+
+    while ($row = $result->fetch_assoc()) {
+        $registros[] = $row;
     }
 
-    $query = $conn->query("SELECT * FROM novedades");
-    if ($query == null) {
-        return die("Error en la consulta");
-    }
-    $news = [];
-
-    while ($row = $query->fetch_assoc()) {
-        $news[] = $row;
-    }
-
-    return $news;
+    return $registros;
 }
-?>

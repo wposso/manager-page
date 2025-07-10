@@ -211,7 +211,7 @@
             <i class="fa-solid fa-box-open big-icon"></i>
             <h1>Bienvenido a ACEMA</h1>
             <p class="intro">
-                <strong>ACEMA ERP</strong> es una plataforma integral diseñada para centralizar la gestión de
+                <strong>ACEMA SGI</strong> es una plataforma integral diseñada para centralizar la gestión de
                 inventario, controlar movimientos logísticos, registrar novedades y optimizar la trazabilidad de
                 recursos en tiempo real.
             </p>
@@ -241,10 +241,10 @@
             <div class="login-area">
                 <h2>Inicio de sesión</h2>
                 <p>Ingrese sus credenciales corporativas para acceder al sistema.</p>
-                <form class="login-form" action="login.php" method="POST">
+                <form class="login-form" action="../controller/logincontroller.php" method="POST">
                     <input type="text" name="usuario" placeholder="Usuario" required />
                     <input type="password" name="clave" placeholder="Contraseña" required />
-                    <button type="submit" onclick="window.location.href='../server.php'">Iniciar sesión</button>
+                    <button type="submit" onclick="window.location = '../server.php'">Iniciar sesión</button>
                 </form>
 
                 <div class="access-note">

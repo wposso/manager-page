@@ -1,17 +1,20 @@
-/* Archivo: css/news.css */
-
-* {
+body {
   font-family: Arial, sans-serif;
 }
 
-.n_table_container {
+.s_table_container {
   flex: 1;
   overflow-y: auto;
-  margin-top: 0;
+  margin-top: 0px;
   padding-right: 10px;
 }
 
-.n_buttons {
+.s_table tbody {
+  height: 300px;
+  overflow-y: auto;
+}
+
+.s_buttons {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -19,7 +22,7 @@
   gap: 10px;
 }
 
-.n_buttons input[type="search"] {
+.s_buttons input[type="search"] {
   border-radius: 5px;
   border: 1px solid #ddd;
   padding: 9px 10px;
@@ -27,12 +30,12 @@
   margin-right: 55px;
 }
 
-.n_buttons input[type="search"]:focus {
+.s_buttons input[type="search"]:focus {
   border-color: #0066cc;
   outline: none;
 }
 
-.n_buttons input[type="button"] {
+.s_buttons input[type="button"] {
   border-radius: 5px;
   border: none;
   padding: 9px 10px;
@@ -42,17 +45,25 @@
   cursor: pointer;
 }
 
-.n_dropdown {
+.s_buttons .s_dropdown_button {
+  background-color: #0066cc;
+  color: white;
+  padding: 9px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.s_dropdown {
   position: relative;
   display: inline-block;
 }
 
-.n_dropdown input[type="button"] {
-  background-color: #0066cc;
-  color: white;
+.s_dropdown:hover .s_dropdown_content {
+  display: block;
 }
 
-.n_dropdown_content {
+.s_dropdown_content {
   display: none;
   position: absolute;
   top: 100%;
@@ -60,32 +71,27 @@
   background-color: #f9f9f9;
   min-width: 180px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  z-index: 10;
   border-radius: 6px;
-  padding: 8px 0;
 }
 
-.n_dropdown:hover .n_dropdown_content {
-  display: block;
-}
-
-.n_dropdown_content button {
+.s_dropdown_content button {
   display: block;
   width: 100%;
+  padding: 10px 16px;
   border: none;
   background: none;
-  padding: 10px 16px;
   text-align: left;
   font-size: 14px;
-  color: #333;
   cursor: pointer;
+  color: #333;
 }
 
-.n_dropdown_content button:hover {
+.s_dropdown_content button:hover {
   background-color: #f1f1f1;
 }
 
-.n_table {
+.s_table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -94,20 +100,20 @@
   overflow: hidden;
 }
 
-.n_table th,
-.n_table td {
+.s_table th,
+.s_table td {
   padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
 
-.n_table th {
+.s_table th {
   background-color: #f2f2f2;
   font-weight: 600;
   color: #333;
 }
 
-.n_table tr:hover {
+.s_table tr:hover {
   background-color: #f5faff;
 }
 
@@ -138,7 +144,8 @@
 }
 
 .modal-content input,
-.modal-content select {
+.modal-content select,
+.modal-content textarea {
   width: 100%;
   padding: 10px;
   margin-bottom: 12px;
@@ -146,6 +153,11 @@
   border-radius: 6px;
   font-size: 14px;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.modal-content textarea {
+  resize: vertical;
 }
 
 .modal-content button[type="submit"] {
@@ -156,6 +168,7 @@
   border-radius: 6px;
   cursor: pointer;
   margin-right: 10px;
+  transition: background-color 0.2s ease;
 }
 
 .modal-content button[type="submit"]:hover {
@@ -169,9 +182,18 @@
   padding: 10px 18px;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .modal-content button[type="button"]:hover {
+  background-color: #c82333;
+}
+
+.modal-content .delete {
+  background-color: #dc3545;
+}
+
+.modal-content .delete:hover {
   background-color: #c82333;
 }
 
@@ -187,16 +209,4 @@
   justify-content: flex-start;
   gap: 10px;
   margin-top: 10px;
-}
-
-.modal-content textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  resize: vertical;
-  box-sizing: border-box;
 }
