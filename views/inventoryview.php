@@ -2,6 +2,12 @@
 require_once __DIR__ . "/../controller/inventorycontroller.php";
 $products = handleGetInventory();
 $catalogos = getCatalogosForSelects();
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
 ?>
 <link rel="stylesheet" href="./css/inventory.css">
 

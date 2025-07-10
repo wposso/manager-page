@@ -1,3 +1,11 @@
+<?php
+    session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
+?>
 <style>
     .reportes-container {
         padding: 40px 60px;

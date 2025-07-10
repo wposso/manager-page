@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
+?>
 <h2 class="dashboard-title">Panel de Control</h2>
 <p class="dashboard-subtitle">Resumen general del sistema:</p>
 

@@ -199,3 +199,48 @@
     margin-top: 10px;
   }
 }
+
+.icon-delete-btn {
+  background-color: transparent;
+  border: none;
+  color: #dc3545;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.icon-delete-btn:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.simple-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-content h2 {
+  text-align: left !important;
+}
+
+.blur-background {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.list-item-title {
+  font-weight: bold;
+  color: #222;
+  font-size: 15px;
+}
+
+.list-item-subtext {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}

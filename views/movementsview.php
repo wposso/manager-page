@@ -1,5 +1,11 @@
 <?php require_once __DIR__ . "/../controller/movementscontroller.php";
-$x = handlemovements(); ?>
+$x = handlemovements();
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+} ?>
 <html>
 <link rel="stylesheet" href="./css/movements.css">
 <h2>Movimientos</h2>

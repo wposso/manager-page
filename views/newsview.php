@@ -4,6 +4,12 @@ require_once __DIR__ . "/../controller/warehousescontroller.php";
 
 $registros = handlegetnews();
 $bodegas = getWarehouses();
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
 ?>
 
 <link rel="stylesheet" href="./css/news.css">

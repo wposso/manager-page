@@ -8,6 +8,13 @@ $usuarios = getUsers();
 $logs = getLogs();
 $proyectos = getProjects();
 $bodegas = getWarehouses();
+
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
 ?>
 
 <link rel="stylesheet" href="./css/admin.css">
@@ -55,30 +62,44 @@ $bodegas = getWarehouses();
     <h3>Proyectos</h3>
     <div class="buttons">
         <button onclick="openModal('addProjectModal')">Añadir Proyecto</button>
+        <button onclick="openModal('deleteProjectModal')">Eliminar Proyecto</button>
     </div>
     <ul class="simple-list">
         <?php foreach ($proyectos as $p): ?>
             <li>
-                <?= $p["nombre"] ?> - <?= $p["ubicacion"] ?>
-                <button class="delete-btn" onclick="confirmDeleteProject(<?= $p['id'] ?>)">🗑️</button>
+                <div class="list-item-title">
+                    <strong>Proyecto:</strong> <?= htmlspecialchars($p["nombre"]) ?>
+                </div>
+                <div class="list-item-subtext">
+                    <strong>Ubicación:</strong> <?= htmlspecialchars($p["ubicacion"]) ?>
+                </div>
             </li>
         <?php endforeach; ?>
     </ul>
+
+
 </div>
 
 <div class="admin-section">
     <h3>Bodegas</h3>
     <div class="buttons">
         <button onclick="openModal('addWarehouseModal')">Añadir Bodega</button>
+        <button onclick="openModal('deleteWarehouseModal')">Eliminar Bodega</button>
     </div>
     <ul class="simple-list">
         <?php foreach ($bodegas as $b): ?>
             <li>
-                <?= $b["nombre"] ?> - <?= $b["ubicacion"] ?>
-                <button class="delete-btn" onclick="confirmDeleteWarehouse(<?= $b['id'] ?>)">🗑️</button>
+                <div class="list-item-title">
+                    <strong>Bodega:</strong> <?= htmlspecialchars($b["nombre"]) ?>
+                </div>
+                <div class="list-item-subtext">
+                    <strong>Ubicación:</strong> <?= htmlspecialchars($b["ubicacion"]) ?>
+                </div>
             </li>
         <?php endforeach; ?>
     </ul>
+
+
 </div>
 
 <div class="admin-section">
@@ -165,20 +186,54 @@ $bodegas = getWarehouses();
     </div>
 </div>
 
+<!-- Modal Eliminar Proyecto -->
+<div id="deleteProjectModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('deleteProjectModal')">&times;</span>
+        <div class="form-container">
+            <h2 style="text-align: left;">Eliminar Proyecto</h2>
+            <form method="POST" action="./controller/projectscontroller.php">
+                <input type="hidden" name="action" value="delete">
+                <input type="text" name="identificador" placeholder="ID o nombre del proyecto" required>
+                <div class="form-actions">
+                    <button type="submit" class="delete">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar Bodega -->
+<div id="deleteWarehouseModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('deleteWarehouseModal')">&times;</span>
+        <div class="form-container">
+            <h2 style="text-align: left;">Eliminar Bodega</h2>
+            <form method="POST" action="./controller/warehousescontroller.php">
+                <input type="hidden" name="action" value="delete">
+                <input type="text" name="identificador" placeholder="ID o nombre de la bodega" required>
+                <div class="form-actions">
+                    <button type="submit" class="delete">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     function openModal(id) {
         document.getElementById(id).style.display = 'flex';
+        document.getElementById('layout').classList.add('blur-background');
     }
 
     function closeModal(id) {
         document.getElementById(id).style.display = 'none';
+        const anyModalOpen = [...document.querySelectorAll(".modal")]
+            .some(modal => modal.style.display === 'flex');
+        if (!anyModalOpen) {
+            document.getElementById('layout').classList.remove('blur-background');
+        }
     }
-
-    window.onclick = function (e) {
-        document.querySelectorAll(".modal").forEach(modal => {
-            if (e.target === modal) modal.style.display = "none";
-        });
-    };
 
     function confirmDeleteProject(id) {
         if (confirm("¿Estás seguro de eliminar este proyecto?")) {
@@ -203,4 +258,18 @@ $bodegas = getWarehouses();
             form.submit();
         }
     }
+
+    function openModal(id) {
+        document.getElementById(id).style.display = "flex";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function (e) {
+        document.querySelectorAll(".modal").forEach(modal => {
+            if (e.target === modal) modal.style.display = "none";
+        });
+    };
 </script>

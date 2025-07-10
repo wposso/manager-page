@@ -1,18 +1,36 @@
 function handleLoadView(x) {
-  fetch("views/" + x)
-    .then((r) => r.text())
-    .then((h) => {
-      const layout = document.getElementById("layout");
-      layout.innerHTML = h;
+  const layout = document.getElementById("layout");
+  const loader = document.getElementById("loader");
 
-      if (x === "homeview.php" && typeof renderDashboardCharts === "function") {
-        setTimeout(renderDashboardCharts, 50);
-      }
+  loader.style.display = "flex";
 
-      if (typeof initModalEventListeners === "function") {
-        initModalEventListeners();
-      }
-    });
+  setTimeout(() => {
+    fetch("views/" + x)
+      .then((r) => r.text())
+      .then((h) => {
+        layout.innerHTML = h;
+
+        if (
+          x === "homeview.php" &&
+          typeof renderDashboardCharts === "function"
+        ) {
+          setTimeout(renderDashboardCharts, 50);
+        }
+
+        if (typeof initModalEventListeners === "function") {
+          initModalEventListeners();
+        }
+      })
+      .catch((err) => {
+        layout.innerHTML = "<p>Error al cargar la vista.</p>";
+        console.error(err);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          loader.style.display = "none";
+        }, 300);
+      });
+  }, 150);
 }
 
 function getCleanHash() {

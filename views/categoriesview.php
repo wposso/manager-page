@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../controller/categoriescontroller.php';
 $response = handlecategories();
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
 ?>
 <link rel="stylesheet" href="./css/categories.css">
 

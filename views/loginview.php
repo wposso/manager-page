@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../functions/Security.php';
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -113,7 +118,6 @@
         }
 
         nav.header-options a {
-            /* margin-left: 16px; */
             text-decoration: none;
             color: #333;
             font-weight: 500;
@@ -230,7 +234,7 @@
         <!-- Panel derecho -->
         <section class="right-panel">
             <header class="header">
-                <img src="../assets/images/Logo-ACEMA.png" alt="Logo ACEMA" style="height: 50px" />
+                <img src="../assets/images/Logo-ACEMA.png" alt="Logo ACEMA" />
                 <nav class="header-options">
                     <a href="#"><i class="fa-solid fa-handshake"></i> Servicios</a>
                     <a href="#"><i class="fa-solid fa-users"></i> Nosotros</a>
@@ -241,10 +245,11 @@
             <div class="login-area">
                 <h2>Inicio de sesión</h2>
                 <p>Ingrese sus credenciales corporativas para acceder al sistema.</p>
-                <form class="login-form" action="../controller/logincontroller.php" method="POST">
+                <form class="login-form" action="../controller/LoginController.php" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
                     <input type="text" name="usuario" placeholder="Usuario" required />
                     <input type="password" name="clave" placeholder="Contraseña" required />
-                    <button type="submit" onclick="window.location = '../server.php'">Iniciar sesión</button>
+                    <button type="submit" >Iniciar sesión</button>
                 </form>
 
                 <div class="access-note">

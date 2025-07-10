@@ -1,23 +1,11 @@
 <?php
 require_once __DIR__ . '/database/dbconnection.php';
-// require_once __DIR__ . '/./middleware/AuthMiddleware.php';
+session_start();
 
-// try {
-//     // Proteger la página para roles ADMIN y SUPERVISOR
-//     AuthMiddleware::protect(['ADMIN', 'SUPERVISOR']);
-
-//     // Configurar headers de seguridad
-//     Security::setSecurityHeaders();
-
-//     // Tu código de la página aquí...
-//     echo "Bienvenido, " . Security::sanitizeInput($_SESSION['user_name']);
-
-// } catch (Exception $e) {
-//     // Registrar error y redirigir
-//     error_log("Dashboard access error: " . $e->getMessage());
-//     header('Location: /error.php');
-//     exit();
-// }
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ./views/loginview.php");
+    exit();
+}
 
 function getProyectos()
 {
@@ -61,7 +49,13 @@ $bodegas = getBodegas();
 
 <body>
     <header>
-        <img src="./assets/images/Logo-ACEMA.png" alt="Logo de ACEMA" width="160">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <img src="./assets/images/Logo-ACEMA.png" alt="Logo de ACEMA" width="160">
+            <span style="font-weight: bold; color: #333; margin: left 70px;">
+                Bienvenido(a), <?= htmlspecialchars($_SESSION['nombre']) ?>
+            </span>
+        </div>
+
         <nav class="options">
             <ul>
                 <a href="#Notificaciones"><i class="fa-solid fa-code"></i> Soporte</a>
@@ -136,9 +130,14 @@ $bodegas = getBodegas();
             Reportes</a>
         <a href="#Novedades" onclick="handleLoadView('newsview.php');"><i class="fa-solid fa-calendar-check"></i>
             Novedades</a>
-        <a href="#Cerrar sesión" onclick="window.location.href='./views/loginview.php'"><i
-                class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+        <a href="#Cerrar sesión" onclick="openLogoutModal()">
+            <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+        </a>
+
     </nav>
+    <div id="loader" class="loader-circle" style="display: none;">
+        <div class="spinner"></div>
+    </div>
 
     <div class="layout" id="layout">
         <!-- Aquí se cargan las vistas -->
@@ -217,6 +216,31 @@ $bodegas = getBodegas();
             });
         }
     </script>
+    <!-- Modal de Confirmación de Cierre de Sesión -->
+    <div id="logoutModal" class="modal-logout">
+        <div class="modal-content">
+            <h3><i class="fa-solid fa-circle-question"></i> ¿Desea cerrar sesión?</h3>
+            <p>Su sesión actual será finalizada.</p>
+            <div class="modal-buttons">
+                <button onclick="confirmLogout()" class="btn-confirm">Sí, cerrar sesión</button>
+                <button onclick="closeLogoutModal()" class="btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openLogoutModal() {
+            document.getElementById("logoutModal").style.display = "flex";
+        }
+
+        function closeLogoutModal() {
+            document.getElementById("logoutModal").style.display = "none";
+        }
+
+        function confirmLogout() {
+            window.location.href = "logout.php";
+        }
+    </script>
+
 </body>
 
 </html>
