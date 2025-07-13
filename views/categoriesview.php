@@ -1,13 +1,21 @@
 <?php
 require_once __DIR__ . '/../controller/categoriescontroller.php';
-$response = handlecategories();
-session_start();
+require_once __DIR__ . '/../functions/auth.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ./views/loginview.php");
     exit();
 }
+
+$response = handlecategories();
+$disabled = getDisabledState();
+$btnClass = $disabled['class'];
+$btnAttr = $disabled['attr'];
 ?>
+
 <link rel="stylesheet" href="./css/categories.css">
 
 <h2>Categorías</h2>
@@ -16,17 +24,19 @@ if (!isset($_SESSION['usuario_id'])) {
     <input type="search" name="searchbar" placeholder="Buscar categoría...">
 
     <div class="c_dropdown">
-        <input type="button" value="Opciones">
+        <button class="dropdown-button <?= $btnClass ?>" onclick="toggleDropdown()" <?= $btnAttr ?>>
+            Opciones <i class="fa-solid fa-chevron-down"></i>
+        </button>
+
         <div class="c_dropdown_content">
-            <!-- Cambio: usar javascript:void(0) para evitar redirección -->
-            <a href="javascript:void(0);" onclick="openModal('addCategoryModal')">Registrar categoría</a>
-            <a href="javascript:void(0);" onclick="openModal('deleteCategoryModal')">Eliminar categoría</a>
+            <a href="javascript:void(0);" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('addCategoryModal')">Registrar categoría</a>
+            <a href="javascript:void(0);" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('deleteCategoryModal')">Eliminar categoría</a>
         </div>
     </div>
 
-    <input type="button" value="Exportar PDF">
-    <input type="button" value="Exportar CSV">
-    <input type="button" value="Imprimir">
+    <input type="button" value="Exportar PDF" class="<?= $btnClass ?>" <?= $btnAttr ?>>
+    <input type="button" value="Exportar CSV" class="<?= $btnClass ?>" <?= $btnAttr ?>>
+    <input type="button" value="Imprimir" class="<?= $btnClass ?>" <?= $btnAttr ?>>
 </div>
 
 <div class="c_table_container">
@@ -37,6 +47,7 @@ if (!isset($_SESSION['usuario_id'])) {
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Estado</th>
+                <th>Creada</th>
             </tr>
         </thead>
         <tbody>
@@ -46,12 +57,14 @@ if (!isset($_SESSION['usuario_id'])) {
                     <td><?= $x["nombre"] ?></td>
                     <td><?= $x["descripcion"] ?></td>
                     <td><?= $x["estado"] ? 'Activo' : 'Inactivo' ?></td>
+                    <td><?= $x["creado_en"] ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
 
+<?php if (!isOperador()): ?>
 <!-- Modal agregar -->
 <div id="addCategoryModal" class="modal">
     <div class="modal-content">
@@ -93,6 +106,7 @@ if (!isset($_SESSION['usuario_id'])) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <script>
     function openModal(id) {

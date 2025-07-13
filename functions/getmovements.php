@@ -1,20 +1,36 @@
-<?php require_once __DIR__ . "/../database/dbconnection.php";
-function getAllMovementFromDb()
+<?php
+require_once __DIR__ . '/../database/dbconnection.php';
+
+function getAllMovements()
 {
     $conn = db_connect();
-    if ($conn->connect_error) {
-        return die("Error en la conexión");
+
+    $query = "
+        SELECT 
+            m.id,
+            m.tipo,
+            i.nombre AS producto,
+            m.cantidad,
+            bo.nombre AS bodega_origen,
+            bd.nombre AS bodega_destino,
+            m.motivo,
+            m.usuario_responsable,
+            m.fecha
+        FROM movimiento m
+        LEFT JOIN inventario i ON m.producto_id = i.id
+        LEFT JOIN bodega bo ON m.bodega_origen_id = bo.id
+        LEFT JOIN bodega bd ON m.bodega_destino_id = bd.id
+        ORDER BY m.fecha DESC
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $movimientos = [];
+    while ($row = $result->fetch_assoc()) {
+        $movimientos[] = $row;
     }
 
-    $query = $conn->query("SELECT id, tipo, producto, cantidad, fecha, observacion FROM movimiento");
-    if ($query == null) {
-        return die("Error al obtener datos");
-    }
-    $movement = [];
-    while ($response = $query->fetch_assoc()) {
-        $movement[] = $response;
-    }
-
-    return $movement;
+    return $movimientos;
 }
-?>

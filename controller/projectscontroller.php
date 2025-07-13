@@ -1,5 +1,11 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../database/dbconnection.php';
+// Opcional: incluir logger
+// require_once __DIR__ . '/../functions/log.php';
 
 function getProjects()
 {
@@ -27,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("INSERT INTO proyecto (nombre, ubicacion, creado_en, actualizado_en) VALUES (?, ?, NOW(), NOW())");
         $stmt->bind_param("ss", $nombre, $ubicacion);
         $success = $stmt->execute();
-        $stmt->close();
-        $conn->close();
+
+        // logAction($_SESSION['usuario_id'], "Agregó proyecto: $nombre");
 
         $msg = $success ? "Proyecto registrado correctamente." : "Error al registrar proyecto.";
         echo "<script>window.location.href = '../server.php#Administrador::" . urlencode($msg) . "';</script>";
@@ -36,14 +42,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($accion === 'delete') {
-        $id = (int) $_POST['id'];
+        $identificador = trim($_POST['identificador'] ?? '');
+        $success = false;
 
-        $stmt = $conn->prepare("DELETE FROM proyecto WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $success = $stmt->execute();
-        $stmt->close();
+        if (!empty($identificador)) {
+            if (is_numeric($identificador)) {
+                $stmt = $conn->prepare("DELETE FROM proyecto WHERE id = ?");
+                $stmt->bind_param("i", $identificador);
+            } else {
+                $stmt = $conn->prepare("DELETE FROM proyecto WHERE nombre = ?");
+                $stmt->bind_param("s", $identificador);
+            }
+
+            $success = $stmt->execute();
+
+            // logAction($_SESSION['usuario_id'], "Eliminó proyecto: $identificador");
+
+            $stmt->close();
+        }
+
         $conn->close();
-
         $msg = $success ? "Proyecto eliminado correctamente." : "Error al eliminar proyecto.";
         echo "<script>window.location.href = '../server.php#Administrador::" . urlencode($msg) . "';</script>";
         exit;

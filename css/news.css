@@ -200,3 +200,15 @@
   resize: vertical;
   box-sizing: border-box;
 }
+
+.modal-content h2 {
+  text-align: left;
+}
+
+.btn-disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+  pointer-events: none;
+}

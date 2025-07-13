@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../functions/getcategories.php';
+require_once __DIR__ . '/../functions/logger.php'; // Registro de logs
 require_once __DIR__ . '/../database/dbconnection.php';
+session_start();
 
 function handlecategories()
 {
@@ -11,6 +13,7 @@ function handlecategories()
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = db_connect();
     $accion = $_POST['accion'] ?? '';
+    $usuario_id = $_SESSION['usuario_id'] ?? null;
 
     if ($accion === 'agregar') {
         $nombre = $conn->real_escape_string($_POST['nombre']);
@@ -23,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
         $conn->close();
 
+        if ($success && $usuario_id) {
+            logAction($usuario_id, "Agregó la categoría: {$nombre}");
+        }
+
         $msg = $success ? "Categoría agregada exitosamente." : "Ocurrió un error al agregar la categoría.";
         echo "<script>
             window.location.href = '../server.php#Categorías::" . urlencode($msg) . "';
@@ -32,8 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($accion === 'eliminar') {
         $identificador = $conn->real_escape_string($_POST['identificador']);
+        $isNumeric = is_numeric($identificador);
 
-        if (is_numeric($identificador)) {
+        if ($isNumeric) {
             $stmt = $conn->prepare("DELETE FROM categoria WHERE id = ?");
             $stmt->bind_param("i", $identificador);
         } else {
@@ -42,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $success = $stmt->execute();
+
+        if ($success && $usuario_id) {
+            $ref = $isNumeric ? "ID {$identificador}" : "nombre '{$identificador}'";
+            logAction($usuario_id, "Eliminó la categoría con {$ref}");
+        }
+
         $stmt->close();
         $conn->close();
 

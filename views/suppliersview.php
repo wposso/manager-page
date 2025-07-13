@@ -1,18 +1,33 @@
 <?php
 require_once __DIR__ . "/../controller/supplierscontroller.php";
+require_once __DIR__ . "/../functions/auth.php";
+// session_start();
+
+// if (!isset($_SESSION['usuario_id'])) {
+//     header("Location: ./views/loginview.php");
+//     exit();
+// }
+
 $response = handlesuppliers();
+$disabled = getDisabledState();
+$btnClass = $disabled['class'];
+$btnAttr = $disabled['attr'];
 ?>
+
 <link rel="stylesheet" href="./css/suppliers.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <h2>Proveedores</h2>
 
 <div class="s_buttons">
     <input type="search" name="searchbar" placeholder="Buscar proveedor...">
     <div class="dropdown">
-        <input type="button" value="Opciones" onclick="toggleDropdown()">
+        <button class="dropdown-button" onclick="toggleDropdown()">
+            Opciones <i class="fa-solid fa-chevron-down"></i>
+        </button>
         <div class="dropdown-content" id="dropdownOpciones">
-            <button type="button" onclick="openModal('registerProveedorModal')">Registrar proveedor</button>
-            <button type="button" onclick="openModal('deleteProveedorModal')">Eliminar proveedor</button>
+            <button type="button" class="<?= $btnClass ?>" onclick="openModal('registerProveedorModal')" <?= $btnAttr ?>>Registrar proveedor</button>
+            <button type="button" class="<?= $btnClass ?>" onclick="openModal('deleteProveedorModal')" <?= $btnAttr ?>>Eliminar proveedor</button>
         </div>
     </div>
     <input type="button" value="Exportar PDF">
@@ -25,6 +40,7 @@ $response = handlesuppliers();
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Nit</th>
                 <th>Nombre</th>
                 <th>Contacto</th>
                 <th>Teléfono</th>
@@ -35,6 +51,7 @@ $response = handlesuppliers();
             <?php foreach ($response as $p): ?>
                 <tr>
                     <td><?= $p["id"] ?></td>
+                    <td><?= $p["nit"] ?></td>
                     <td><?= $p["nombre"] ?></td>
                     <td><?= $p["contacto"] ?></td>
                     <td><?= $p["telefono"] ?></td>
@@ -51,7 +68,6 @@ $response = handlesuppliers();
         <span class="close" onclick="closeModal('registerProveedorModal')">&times;</span>
         <div class="form-container">
             <h2>Registrar Proveedor</h2>
-            <!-- ✅ AJUSTE DE RUTA DE FORMULARIO -->
             <form action="controller/supplierscontroller.php" method="POST">
                 <input type="hidden" name="accion" value="agregar">
                 <input type="text" name="nombre" placeholder="Nombre del proveedor" required>
@@ -75,7 +91,6 @@ $response = handlesuppliers();
         <span class="close" onclick="closeModal('deleteProveedorModal')">&times;</span>
         <div class="form-container">
             <h2>Eliminar Proveedor</h2>
-            <!-- ✅ AJUSTE DE RUTA DE FORMULARIO -->
             <form action="controller/supplierscontroller.php" method="POST">
                 <input type="hidden" name="accion" value="eliminar">
                 <input type="text" name="identificador" placeholder="Ingrese el ID o NIT del proveedor" required>
@@ -90,6 +105,8 @@ $response = handlesuppliers();
 
 <script>
     function openModal(modalId) {
+        const btn = document.querySelector(`[onclick="openModal('${modalId}')"]`);
+        if (btn && btn.classList.contains('disabled-button')) return;
         document.getElementById(modalId).style.display = 'flex';
     }
 
@@ -116,4 +133,36 @@ $response = handlesuppliers();
             }
         }
     }
+</script>
+
+<script>
+    function showAlert(title, message, type = 'info') {
+        const alert = document.createElement('div');
+        alert.className = `custom-alert ${type}`;
+        const icons = {
+            success: '<i class="fas fa-check-circle"></i>',
+            error: '<i class="fas fa-times-circle"></i>',
+            info: '<i class="fas fa-info-circle"></i>'
+        };
+        alert.innerHTML = `
+            <div class="alert-title">${icons[type] || icons.info} ${title}</div>
+            <div class="alert-message">${message}</div>
+        `;
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 4500);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash;
+        if (hash.includes('Proveedores::')) {
+            const parts = hash.split('::');
+            try {
+                const alertData = JSON.parse(decodeURIComponent(parts[1]));
+                showAlert(alertData.title, alertData.message, alertData.type);
+            } catch (e) {
+                console.error("Alerta mal formateada:", e);
+            }
+            history.replaceState(null, '', window.location.pathname);
+        }
+    });
 </script>

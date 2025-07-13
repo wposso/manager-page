@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . '/database/dbconnection.php';
+require_once __DIR__ . '/functions/auth.php';
 session_start();
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ./views/loginview.php");
     exit();
 }
+
 
 function getProyectos()
 {
@@ -34,7 +36,9 @@ function getBodegas()
 $proyectos = getProyectos();
 $bodegas = getBodegas();
 ?>
-
+<?php if (canAccessAdminPanel()): ?>
+    <li><a href="#" onclick="handleLoadView('administrator_view.php')">Panel de Administración</a></li>
+<?php endif; ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -51,7 +55,7 @@ $bodegas = getBodegas();
     <header>
         <div style="display: flex; align-items: center; gap: 20px;">
             <img src="./assets/images/Logo-ACEMA.png" alt="Logo de ACEMA" width="160">
-            <span style="font-weight: bold; color: #333; margin: left 70px;">
+            <span style="font-weight: bold; color: #333; margin-left: 70px;">
                 Bienvenido(a), <?= htmlspecialchars($_SESSION['nombre']) ?>
             </span>
         </div>
@@ -82,8 +86,7 @@ $bodegas = getBodegas();
             </a>
             <div class="submenu" style="display: none;">
                 <?php foreach ($proyectos as $p): ?>
-                    <a href="#Proyecto<?= $p['id'] ?>" onclick="handleLoadView('projectview.php?id=<?= $p['id'] ?>');"
-                        class="submenu-link">
+                    <a href="#Proyecto<?= $p['id'] ?>" class="submenu-link">
                         <i class="fa-solid fa-toolbox"></i> <?= htmlspecialchars($p['nombre']) ?>
                     </a>
                 <?php endforeach; ?>
@@ -98,13 +101,13 @@ $bodegas = getBodegas();
             </a>
             <div class="submenu" style="display: none;">
                 <?php foreach ($bodegas as $b): ?>
-                    <a href="#Bodega<?= $b['id'] ?>" onclick="handleLoadView('warehouseview.php?id=<?= $b['id'] ?>');"
-                        class="submenu-link">
+                    <a href="#Bodega<?= $b['id'] ?>" class="submenu-link">
                         <i class="fa-solid fa-box"></i> <?= htmlspecialchars($b['nombre']) ?>
                     </a>
                 <?php endforeach; ?>
             </div>
         </div>
+
 
         <a href="#Proveedores" onclick="handleLoadView('suppliersview.php');"><i class="fa-solid fa-truck"></i>
             Proveedores</a><br>
@@ -240,6 +243,22 @@ $bodegas = getBodegas();
             window.location.href = "logout.php";
         }
     </script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash.includes('Proveedores::')) {
+                const parts = hash.split('::');
+                try {
+                    const alertData = JSON.parse(decodeURIComponent(parts[1].replace(/\+/g, ' ')));
+                    showAlert(alertData.title, alertData.message, alertData.type);
+                } catch (e) {
+                    console.error("Error al decodificar la alerta:", e);
+                }
+                history.replaceState(null, '', window.location.pathname); // limpia el hash
+            }
+        });
+    </script>
+
 
 </body>
 

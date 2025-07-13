@@ -1,5 +1,12 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../functions/func_subcategorie.php';
+require_once __DIR__ . '/../database/dbconnection.php';
+// Opcional: para logs de acciones
+// require_once __DIR__ . '/../functions/log.php';
 
 function handlesubcategories()
 {
@@ -22,13 +29,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $estado = intval($_POST['estado']);
 
         $success = agregarSubcategoria($nombre, $descripcion, $categoria_id, $estado);
-        $msg = $success ? 'Subcategoría registrada exitosamente' : 'Error al registrar subcategoría';
+
+        if ($success) {
+            $msg = 'Subcategoría registrada exitosamente.';
+            // logAction($_SESSION['usuario_id'], "Agregó subcategoría: $nombre");
+        } else {
+            $msg = 'Error al registrar subcategoría.';
+        }
     }
 
     if ($accion === 'delete') {
         $nombre = trim($_POST['nombre']);
         $success = eliminarSubcategoria($nombre);
-        $msg = $success ? 'Subcategoría eliminada correctamente' : 'No se encontró o error al eliminar';
+
+        if ($success) {
+            $msg = 'Subcategoría eliminada correctamente.';
+            // logAction($_SESSION['usuario_id'], "Eliminó subcategoría: $nombre");
+        } else {
+            $msg = 'No se encontró la subcategoría o error al eliminar.';
+        }
     }
 
     echo "<script>

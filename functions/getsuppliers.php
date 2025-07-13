@@ -4,7 +4,7 @@ require_once __DIR__ . '/../database/dbconnection.php';
 function obtenerProveedores()
 {
     $conn = db_connect();
-    $stmt = $conn->query("SELECT id, nombre, contacto, telefono, correo FROM proveedor ORDER BY id DESC");
+    $stmt = $conn->query("SELECT id, nit, nombre, contacto, telefono, correo FROM proveedor ORDER BY id DESC");
     $proveedores = [];
 
     while ($row = $stmt->fetch_assoc()) {
@@ -20,12 +20,13 @@ function agregarProveedor($data)
     $stmt = $conn->prepare("INSERT INTO proveedor (nombre, contacto, telefono, correo, nit, direccion, creado_en, actualizado_en)
                             VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
-    $stmt->bind_param("ssssss", 
-        $data['nombre'], 
-        $data['contacto'], 
-        $data['telefono'], 
-        $data['correo'], 
-        $data['nit'], 
+    $stmt->bind_param(
+        "ssssss",
+        $data['nombre'],
+        $data['contacto'],
+        $data['telefono'],
+        $data['correo'],
+        $data['nit'],
         $data['direccion']
     );
 

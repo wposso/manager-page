@@ -115,3 +115,83 @@ function getBodegas()
     $conn->close();
     return $bodegas;
 }
+
+function getProductsByProject($proyecto_id)
+{
+    $conn = db_connect();
+    $stmt = $conn->prepare("
+        SELECT i.*, 
+               c.nombre AS categoria, 
+               s.nombre AS subcategoria, 
+               p.nombre AS proveedor, 
+               b.nombre AS bodega
+        FROM inventario i
+        JOIN categoria c ON i.categoria_id = c.id
+        JOIN subcategoria s ON i.subcategoria_id = s.id
+        JOIN proveedor p ON i.proveedor_id = p.id
+        JOIN bodega b ON i.bodega_id = b.id
+        WHERE i.proyecto_id = ?
+    ");
+    $stmt->bind_param("i", $proyecto_id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $productos = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $productos[] = $row;
+    }
+
+    return $productos;
+}
+
+function getProjectName($proyecto_id)
+{
+    $conn = db_connect();
+    $stmt = $conn->prepare("SELECT nombre FROM proyecto WHERE id = ?");
+    $stmt->bind_param("i", $proyecto_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row ? $row['nombre'] : "Proyecto Desconocido";
+}
+
+function getProductsByBodega($bodega_id)
+{
+    $conn = db_connect();
+    $stmt = $conn->prepare("
+        SELECT i.*, 
+               c.nombre AS categoria, 
+               s.nombre AS subcategoria, 
+               p.nombre AS proveedor, 
+               b.nombre AS bodega
+        FROM inventario i
+        JOIN categoria c ON i.categoria_id = c.id
+        JOIN subcategoria s ON i.subcategoria_id = s.id
+        JOIN proveedor p ON i.proveedor_id = p.id
+        JOIN bodega b ON i.bodega_id = b.id
+        WHERE i.bodega_id = ? AND i.cantidad > 0
+    ");
+    $stmt->bind_param("i", $bodega_id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $productos = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $productos[] = $row;
+    }
+
+    return $productos;
+}
+
+function getBodegaName($bodega_id)
+{
+    $conn = db_connect();
+    $stmt = $conn->prepare("SELECT nombre FROM bodega WHERE id = ?");
+    $stmt->bind_param("i", $bodega_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row ? $row['nombre'] : "Bodega Desconocida";
+}

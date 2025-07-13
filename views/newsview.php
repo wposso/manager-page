@@ -1,15 +1,21 @@
 <?php
 require_once __DIR__ . "/../controller/newscontroller.php";
 require_once __DIR__ . "/../controller/warehousescontroller.php";
+require_once __DIR__ . '/../functions/auth.php';
 
-$registros = handlegetnews();
-$bodegas = getWarehouses();
-session_start();
-
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ./views/loginview.php");
     exit();
 }
+
+$registros = handlegetnews();
+$bodegas = getWarehouses();
+$disabled = getDisabledState();
+$btnClass = $disabled['class'];
+$btnAttr = $disabled['attr'];
 ?>
 
 <link rel="stylesheet" href="./css/news.css">
@@ -20,16 +26,18 @@ if (!isset($_SESSION['usuario_id'])) {
     <input type="search" placeholder="Buscar novedad...">
 
     <div class="n_dropdown">
-        <input type="button" value="Opciones">
+        <button class="dropdown-button <?= $btnClass ?>" <?= $btnAttr ?>>
+            Opciones <i class="fa-solid fa-chevron-down"></i>
+        </button>
         <div class="n_dropdown_content">
-            <button onclick="openModal('registerModal')">Registrar novedad</button>
-            <button onclick="openModal('deleteModal')">Eliminar novedad</button>
+            <button class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('registerModal')">Registrar novedad</button>
+            <button class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('deleteModal')">Eliminar novedad</button>
         </div>
     </div>
 
-    <input type="button" value="Exportar PDF">
-    <input type="button" value="Exportar CSV">
-    <input type="button" value="Imprimir">
+    <input type="button" value="Exportar PDF" class="<?= $btnClass ?>" <?= $btnAttr ?>>
+    <input type="button" value="Exportar CSV" class="<?= $btnClass ?>" <?= $btnAttr ?>>
+    <input type="button" value="Imprimir" class="<?= $btnClass ?>" <?= $btnAttr ?>>
 </div>
 
 <div class="n_table_container">
@@ -59,6 +67,7 @@ if (!isset($_SESSION['usuario_id'])) {
     </table>
 </div>
 
+<?php if (!isOperador()): ?>
 <!-- Modal: Registrar -->
 <div id="registerModal" class="modal">
     <div class="modal-content">
@@ -110,14 +119,17 @@ if (!isset($_SESSION['usuario_id'])) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <script>
     function openModal(id) {
         document.getElementById(id).style.display = "flex";
     }
+
     function closeModal(id) {
         document.getElementById(id).style.display = "none";
     }
+
     window.onclick = function (e) {
         document.querySelectorAll(".modal").forEach(modal => {
             if (e.target === modal) modal.style.display = "none";

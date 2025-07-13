@@ -5,7 +5,7 @@ function getAllSubcategoriesFromDb()
 {
     $conn = db_connect();
     $sql = "
-        SELECT s.id, s.nombre, s.descripcion, c.nombre AS categoria, s.estado
+        SELECT s.id, s.nombre, s.descripcion, c.nombre AS categoria, s.estado, s.creado_en
         FROM subcategoria s
         INNER JOIN categoria c ON s.categoria_id = c.id
         ORDER BY s.id DESC

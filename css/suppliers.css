@@ -159,3 +159,79 @@
 .modal-content .delete:hover {
   background-color: #c82333;
 }
+
+/* Dropdown estilo */
+/* --- Estilos dropdown personalizados --- */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  border-radius: 5px;
+  border: none;
+  padding: 9px 10px;
+  background-color: #0066cc;
+  color: white;
+  width: 100px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-toggle:hover {
+  background-color: #0056b3;
+}
+
+/* Contenido del dropdown (inicialmente oculto) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #ffffff;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  z-index: 100;
+  padding: 5px 0;
+  flex-direction: column;
+}
+
+/* Botones dentro del dropdown */
+.dropdown-content button {
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-content button:hover {
+  background-color: #f2f2f2;
+}
+
+/* Mostrar dropdown cuando esté activo */
+.dropdown.open .dropdown-content {
+  display: flex;
+}
+
+.modal-content h2 {
+  text-align: left !important;
+}
+
+.form-actions {
+  text-align: left;
+}
+
+.btn-disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+  pointer-events: none;
+}

@@ -3,7 +3,7 @@
   height: calc(100vh - 60px);
   padding: 20px;
   box-sizing: border-box;
-  background-color: #f5f1f1;
+  background-color: #ffffff;
 }
 
 .admin-heading {
@@ -28,6 +28,17 @@
   margin-bottom: 15px;
   font-weight: 600;
   color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
 .row {
@@ -90,19 +101,9 @@
   font-family: monospace;
 }
 
+/* LISTADO SIMPLE OBSOLETO - YA NO SE USA EN BODEGAS/PROYECTOS */
 .simple-list {
-  list-style-type: none;
-  padding-left: 0;
-  margin-top: 10px;
-}
-
-.simple-list li {
-  padding: 6px 10px;
-  background-color: #f5f5f5;
-  margin-bottom: 5px;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #333;
+  display: none;
 }
 
 .modal {
@@ -133,6 +134,7 @@
   margin-bottom: 20px;
   font-size: 20px;
   font-weight: 600;
+  text-align: left;
 }
 
 .modal-content input,
@@ -190,16 +192,19 @@
     overflow-x: auto;
   }
 
-  .row {
+  .row,
+  .section-header {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .buttons {
+  .buttons,
+  .project-controls {
     margin-top: 10px;
   }
 }
 
+/* Botón eliminar con ícono */
 .icon-delete-btn {
   background-color: transparent;
   border: none;
@@ -215,24 +220,14 @@
   background-color: rgba(220, 53, 69, 0.1);
 }
 
-.simple-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-content h2 {
-  text-align: left !important;
-}
-
+/* Efecto blur cuando modal está activo */
 .blur-background {
   filter: blur(4px);
   pointer-events: none;
   user-select: none;
 }
 
+/* TITULOS EN LISTA SIMPLE */
 .list-item-title {
   font-weight: bold;
   color: #222;
@@ -244,3 +239,66 @@
   color: #666;
   margin-top: 2px;
 }
+
+/* NUEVO DISEÑO DE BOTONES Y TARJETAS */
+.project-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.project-controls button {
+  background-color: #2d8f2d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.project-controls button:hover {
+  background-color: #257a25;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: #f9f9f9;
+  border-left: 6px solid #2d8f2d;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-body p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* .btn-disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+  pointer-events: none;
+} */

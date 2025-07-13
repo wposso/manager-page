@@ -1,14 +1,22 @@
 <?php
 require_once __DIR__ . "/../controller/inventorycontroller.php";
-$products = handleGetInventory();
-$catalogos = getCatalogosForSelects();
-session_start();
+require_once __DIR__ . '/../functions/auth.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ./views/loginview.php");
     exit();
 }
+
+$products = handleGetInventory();
+$catalogos = getCatalogosForSelects();
+$disabled = getDisabledState();
+$btnClass = $disabled['class'];
+$btnAttr = $disabled['attr'];
 ?>
+
 <link rel="stylesheet" href="./css/inventory.css">
 
 <h2>Inventario General</h2>
@@ -16,17 +24,19 @@ if (!isset($_SESSION['usuario_id'])) {
 <div class="i_buttons">
     <input type="search" name="search" placeholder="Buscar producto...">
 
-    <div class="dropdown">
-        <button class="dropdown-button">Opciones</button>
+    <div class="i_dropdown">
+        <button class="dropdown-button <?= $btnClass ?>" <?= $btnAttr ?>>
+            Opciones <i class="fa-solid fa-chevron-down"></i>
+        </button>
         <div class="dropdown-content">
-            <button type="button" onclick="openModal('addModal')">Añadir registro</button>
-            <button type="button" onclick="openModal('deleteModal')">Eliminar registro</button>
+            <button type="button" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('addModal')">Añadir registro</button>
+            <button type="button" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('deleteModal')">Eliminar registro</button>
         </div>
     </div>
 
-    <input type="button" value="Exportar PDF">
-    <input type="button" value="Exportar CSV">
-    <input type="button" value="Imprimir">
+    <input type="button" value="Exportar PDF" class="<?= $btnClass ?>" <?= $btnAttr ?>>
+    <input type="button" value="Exportar CSV" class="<?= $btnClass ?>" <?= $btnAttr ?>>
+    <input type="button" value="Imprimir" class="<?= $btnClass ?>" <?= $btnAttr ?>>
 </div>
 
 <div class="i_table_container">
@@ -62,6 +72,7 @@ if (!isset($_SESSION['usuario_id'])) {
     </table>
 </div>
 
+<?php if (!isOperador()): ?>
 <!-- Modal Añadir -->
 <div id="addModal" class="modal">
     <div class="modal-content">
@@ -135,6 +146,7 @@ if (!isset($_SESSION['usuario_id'])) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <script>
     function openModal(id) {

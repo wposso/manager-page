@@ -10,7 +10,7 @@ function getAllCategoriesFromDb()
     }
 
     $categoria = [];
-    $response = $conn->query("SELECT id, nombre, descripcion, estado FROM categoria");
+    $response = $conn->query("SELECT id, nombre, descripcion, estado, creado_en FROM categoria");
 
     while ($row = $response->fetch_assoc()) {
         $categoria[] = $row;

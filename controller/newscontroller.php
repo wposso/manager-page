@@ -1,14 +1,20 @@
 <?php
-require_once __DIR__ . '/../functions/getnews.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-function handlegetnews() {
+require_once __DIR__ . '/../functions/getnews.php';
+require_once __DIR__ . '/../database/dbconnection.php';
+// Opcional: log de actividad
+// require_once __DIR__ . '/../functions/log.php';
+
+function handlegetnews()
+{
     return getAllNews();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once __DIR__ . '/../database/dbconnection.php';
     $conn = db_connect();
-
     $accion = $_POST['action'] ?? '';
 
     if ($accion === 'add') {
@@ -24,7 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("sssis", $titulo, $descripcion, $tipo, $bodega_id, $fecha);
         $success = $stmt->execute();
 
-        $msg = $success ? "Novedad registrada correctamente." : "Error al registrar novedad.";
+        // logAction($_SESSION['usuario_id'], "Agregó novedad: $titulo");
+
+        $msg = $success ? "Novedad registrada correctamente." : "Error al registrar la novedad.";
         echo "<script>window.location.href = '../server.php#Novedades::" . urlencode($msg) . "';</script>";
         exit;
     }
@@ -35,7 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("i", $id);
         $success = $stmt->execute();
 
-        $msg = $success ? "Novedad eliminada correctamente." : "Error al eliminar novedad.";
+        // logAction($_SESSION['usuario_id'], "Eliminó novedad ID: $id");
+
+        $msg = $success ? "Novedad eliminada correctamente." : "Error al eliminar la novedad.";
         echo "<script>window.location.href = '../server.php#Novedades::" . urlencode($msg) . "';</script>";
         exit;
     }
