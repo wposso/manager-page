@@ -34,13 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $subcategoria_id = intval($_POST['subcategoria_id']);
         $proveedor_id = intval($_POST['proveedor_id']);
         $estado = intval($_POST['estado']);
-        $proyecto_id = $_POST['proyecto_id'] !== '' ? intval($_POST['proyecto_id']) : null;
-        $bodega_id = $_POST['bodega_id'] !== '' ? intval($_POST['bodega_id']) : null;
 
+        // Validación segura para campos opcionales
+        $proyecto_id = isset($_POST['proyecto_id']) && $_POST['proyecto_id'] !== '' ? intval($_POST['proyecto_id']) : null;
+        $bodega_id = isset($_POST['bodega_id']) && $_POST['bodega_id'] !== '' ? intval($_POST['bodega_id']) : null;
+
+        // Prepara consulta
         $stmt = $conn->prepare("INSERT INTO inventario 
-            (codigo, nombre, cantidad, categoria_id, subcategoria_id, proveedor_id, proyecto_id, bodega_id, estado, creado_en, actualizado_en)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        (codigo, nombre, cantidad, categoria_id, subcategoria_id, proveedor_id, proyecto_id, bodega_id, estado, creado_en, actualizado_en)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
+        // Vincula los parámetros con valores permitiendo NULL
         $stmt->bind_param(
             "ssiiiiiii",
             $codigo,
@@ -58,26 +62,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
         $conn->close();
 
+        // Siempre redirigir a Inventario
+        $vista = "Inventario";
+
         $msg = $success ? "Producto registrado correctamente." : "No se pudo registrar el producto.";
         echo "<script>
-            alert('$msg');
-            window.location.href = '../server.php#Inventario';
-        </script>";
+        alert('$msg');
+        window.location.href = '../server.php#$vista';
+    </script>";
         exit;
     }
+
 
     // === ELIMINAR PRODUCTO ===
     if ($action === 'delete') {
         $codigo = $conn->real_escape_string($_POST['codigo']);
+
         $stmt = $conn->prepare("DELETE FROM inventario WHERE codigo = ?");
         $stmt->bind_param("s", $codigo);
         $success = $stmt->execute();
         $stmt->close();
         $conn->close();
 
-        $msg = $success ? "Producto eliminado correctamente." : "No se pudo eliminar el producto.";
         echo "<script>
-            alert('$msg');
+            alert('" . ($success ? "Producto eliminado correctamente." : "No se pudo eliminar el producto.") . "');
             window.location.href = '../server.php#Inventario';
         </script>";
         exit;
@@ -91,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         list($origen_tipo, $origen_id) = explode('_', $_POST['origen_tipo_id']);
         list($destino_tipo, $destino_id) = explode('_', $_POST['destino_tipo_id']);
 
-        // Validar existencia
+        // Validar cantidad disponible en el origen
         $check = $conn->prepare("SELECT cantidad FROM inventario WHERE id = ?");
         $check->bind_param("i", $producto_id);
         $check->execute();
@@ -101,24 +109,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$producto || $producto['cantidad'] < $cantidad) {
             echo "<script>
-                alert('Cantidad no disponible para la transferencia.');
-                window.location.href = '../server.php#Inventario';
-            </script>";
+            alert('Cantidad no disponible para la transferencia.');
+            window.location.href = '../server.php#Inventario';
+        </script>";
             exit;
         }
 
-        // Descontar cantidad del origen
+        // Descontar del origen
         $update = $conn->prepare("UPDATE inventario SET cantidad = cantidad - ? WHERE id = ?");
         $update->bind_param("ii", $cantidad, $producto_id);
         $update->execute();
         $update->close();
 
+        // Obtener info completa del producto
         $productoInfo = getProductById($producto_id);
 
-        // Verificar existencia en destino
+        // Buscar si ya existe ese producto en el destino
         $query = "SELECT id FROM inventario 
-                  WHERE codigo = ? AND nombre = ? AND categoria_id = ? AND subcategoria_id = ? 
-                        AND proveedor_id = ? AND estado = ? AND " .
+        WHERE codigo = ? AND nombre = ? AND categoria_id = ? AND subcategoria_id = ? 
+        AND proveedor_id = ? AND estado = ? AND " .
             ($destino_tipo === 'proyecto' ? "proyecto_id = ?" : "bodega_id = ?");
         $stmt = $conn->prepare($query);
         $stmt->bind_param(
@@ -146,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $destino_bodega_id = $destino_tipo === 'bodega' ? $destino_id : null;
 
             $insert = $conn->prepare("INSERT INTO inventario 
-                (codigo, nombre, cantidad, categoria_id, subcategoria_id, proveedor_id, estado, proyecto_id, bodega_id, creado_en, actualizado_en)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            (codigo, nombre, cantidad, categoria_id, subcategoria_id, proveedor_id, estado, proyecto_id, bodega_id, creado_en, actualizado_en)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
             $insert->bind_param(
                 "ssiiiiiii",
@@ -165,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insert->close();
         }
 
-        // Registrar movimiento
+        // Registrar el movimiento
         $usuario = $_SESSION['usuario_id'] ?? null;
         $origen_bodega_id = $origen_tipo === 'bodega' ? intval($origen_id) : null;
         $origen_proyecto_id = $origen_tipo === 'proyecto' ? intval($origen_id) : null;
@@ -173,11 +182,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destino_proyecto_id = $destino_tipo === 'proyecto' ? intval($destino_id) : null;
 
         $stmt = $conn->prepare("INSERT INTO movimiento (
-            tipo, producto_id, cantidad, bodega_origen_id, proyecto_origen_id,
-            bodega_destino_id, proyecto_destino_id, motivo, usuario_responsable, fecha
-        ) VALUES (
-            'transferencia', ?, ?, ?, ?, ?, ?, ?, ?, NOW()
-        )");
+        tipo, producto_id, cantidad, bodega_origen_id, proyecto_origen_id,
+        bodega_destino_id, proyecto_destino_id, motivo, usuario_responsable, fecha
+    ) VALUES (
+        'transferencia', ?, ?, ?, ?, ?, ?, ?, ?, NOW()
+    )");
 
         $stmt->bind_param(
             "iiiiiiis",
@@ -190,15 +199,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $motivo,
             $usuario
         );
-
         $stmt->execute();
         $stmt->close();
         $conn->close();
 
+        // Redirigir siempre al inventario general
         echo "<script>
-            alert('Transferencia realizada correctamente.');
-            window.location.href = '../server.php#Inventario';
-        </script>";
+        alert('Transferencia realizada correctamente.');
+        window.location.href = '../server.php#Inventario';
+    </script>";
         exit;
     }
+
 }

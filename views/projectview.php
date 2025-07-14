@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../controller/inventorycontroller.php";
 require_once __DIR__ . '/../functions/auth.php';
 require_once __DIR__ . '/../functions/getinventory.php';
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -11,7 +12,15 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 
+// Obtener ID del proyecto desde ?id= o desde el hash URI (ej. #Proyecto-1)
 $proyecto_id = $_GET['id'] ?? null;
+
+if (!$proyecto_id && isset($_SERVER['REQUEST_URI'])) {
+    if (preg_match('/Proyecto-(\d+)/', $_SERVER['REQUEST_URI'], $m)) {
+        $proyecto_id = $m[1];
+    }
+}
+
 if (!$proyecto_id) {
     echo "<p>Error: Proyecto no especificado.</p>";
     exit();
@@ -42,7 +51,6 @@ $proyecto_nombre = getProjectName($proyecto_id);
         </div>
     </div>
 
-
     <input type="button" value="Exportar PDF" class="<?= $btnClass ?>" <?= $btnAttr ?>>
     <input type="button" value="Exportar CSV" class="<?= $btnClass ?>" <?= $btnAttr ?>>
     <input type="button" value="Imprimir" class="<?= $btnClass ?>" <?= $btnAttr ?>>
@@ -72,7 +80,6 @@ $proyecto_nombre = getProjectName($proyecto_id);
                     <td><?= $p['categoria'] ?></td>
                     <td><?= $p['subcategoria'] ?></td>
                     <td><?= $p['proveedor'] ?></td>
-                    <!-- <td><?= $p['bodega'] ?></td> -->
                     <td><?= $p['ubicacion'] ?? 'Sin ubicación' ?></td>
                     <td><?= $p['cantidad'] ?></td>
                     <td><?= $p['estado'] ? 'Activo' : 'Inactivo' ?></td>
@@ -82,8 +89,8 @@ $proyecto_nombre = getProjectName($proyecto_id);
     </table>
 </div>
 
-<!-- Modales (si el usuario no es operador) -->
 <?php if (!isOperador()): ?>
+    <!-- Modal Añadir -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addModal')">&times;</span>
@@ -167,7 +174,7 @@ $proyecto_nombre = getProjectName($proyecto_id);
                 <form method="post" action="./controller/inventorycontroller.php">
                     <input type="hidden" name="action" value="transfer">
                     <input type="hidden" name="origen_tipo_id" value="proyecto_<?= $proyecto_id ?>">
-                    <input type="hidden" name="redirect_to" value="#Transferencia::proyecto::<?= $proyecto_id ?>">
+                    <input type="hidden" name="redirect_to" value="#Transferencia::Proyecto-<?= $proyecto_id ?>">
 
                     <select name="producto_id" required>
                         <option value="" disabled selected hidden>Selecciona el producto</option>
@@ -199,8 +206,6 @@ $proyecto_nombre = getProjectName($proyecto_id);
             </div>
         </div>
     </div>
-
-
 <?php endif; ?>
 
 <script>
@@ -214,9 +219,9 @@ $proyecto_nombre = getProjectName($proyecto_id);
     }
 
     window.onclick = function (e) {
-        ['addModal', 'deleteModal'].forEach(id => {
+        ['addModal', 'deleteModal', 'transferModal'].forEach(id => {
             const modal = document.getElementById(id);
             if (e.target === modal) modal.style.display = "none";
         });
-    }
+    };
 </script>

@@ -116,7 +116,7 @@ function checkAndShowAlert() {
   const alerta = localStorage.getItem("alerta");
   if (alerta) {
     try {
-      const data = JSON.parse(alerta);
+      const data = JSON.parse(decodeURIComponent(alerta));
       alert(`${data.title}\n${data.message}`);
     } catch (e) {
       console.warn("Error mostrando alerta:", e);
@@ -124,3 +124,10 @@ function checkAndShowAlert() {
     localStorage.removeItem("alerta");
   }
 }
+
+
+// Dentro de handleLoadView o el script que carga vistas
+const hash = location.hash.slice(1); // Ej: "Proyecto-3&proyecto_id=3"
+const [vista, queryString] = hash.split('&');
+const url = `views/${vista.toLowerCase()}view.php?${queryString}`;
+handleLoadView(url);

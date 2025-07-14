@@ -133,7 +133,7 @@ function getProductsByProject($proyecto_id)
         JOIN proveedor p ON i.proveedor_id = p.id
         LEFT JOIN bodega b ON i.bodega_id = b.id
         LEFT JOIN proyecto pr ON i.proyecto_id = pr.id
-        WHERE i.proyecto_id = ?
+        WHERE i.proyecto_id = ? AND i.cantidad > 0
     ");
     $stmt->bind_param("i", $proyecto_id);
     $stmt->execute();

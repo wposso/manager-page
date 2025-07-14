@@ -29,8 +29,10 @@ $btnAttr = $disabled['attr'];
             Opciones <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="dropdown-content">
-            <button type="button" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('addModal')">Añadir registro</button>
-            <button type="button" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('deleteModal')">Eliminar registro</button>
+            <button type="button" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('addModal')">Añadir
+                registro</button>
+            <button type="button" class="<?= $btnClass ?>" <?= $btnAttr ?> onclick="openModal('deleteModal')">Eliminar
+                registro</button>
         </div>
     </div>
 
@@ -64,7 +66,7 @@ $btnAttr = $disabled['attr'];
                     <td><?= $p['subcategoria'] ?></td>
                     <td><?= $p['proveedor'] ?></td>
                     <!-- <td><?= $p['bodega'] ?></td> -->
-                     <td><?= $p['ubicacion'] ?? 'Sin ubicación' ?></td>
+                    <td><?= $p['ubicacion'] ?? 'Sin ubicación' ?></td>
                     <td><?= $p['cantidad'] ?></td>
                     <td><?= $p['estado'] ? 'Activo' : 'Inactivo' ?></td>
                 </tr>
@@ -74,79 +76,85 @@ $btnAttr = $disabled['attr'];
 </div>
 
 <?php if (!isOperador()): ?>
-<!-- Modal Añadir -->
-<div id="addModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('addModal')">&times;</span>
-        <div class="form-container">
-            <h2>Añadir Producto</h2>
-            <form method="post" action="./controller/inventorycontroller.php">
-                <input type="hidden" name="action" value="add">
+    <!-- Modal Añadir -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <div class="form-container">
+                <h2>Añadir Producto</h2>
+                <form method="post" action="./controller/inventorycontroller.php">
+                    <input type="hidden" name="action" value="add">
 
-                <input type="text" name="codigo" placeholder="Código del producto" required>
-                <input type="text" name="nombre" placeholder="Nombre del producto" required>
-                <input type="number" name="cantidad" placeholder="Cantidad" required>
+                    <!-- Campos ocultos para evitar errores -->
+                    <input type="hidden" name="proyecto_id" value="">
+                    <input type="hidden" name="bodega_id" value="">
 
-                <select name="categoria_id" required>
-                    <option value="" disabled selected hidden>Categoría</option>
-                    <?php foreach ($catalogos['categorias'] as $c): ?>
-                        <option value="<?= $c['id'] ?>"><?= $c['nombre'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                    <input type="text" name="codigo" placeholder="Código del producto" required>
+                    <input type="text" name="nombre" placeholder="Nombre del producto" required>
+                    <input type="number" name="cantidad" placeholder="Cantidad" required>
 
-                <select name="subcategoria_id" required>
-                    <option value="" disabled selected hidden>Subcategoría</option>
-                    <?php foreach ($catalogos['subcategorias'] as $s): ?>
-                        <option value="<?= $s['id'] ?>"><?= $s['nombre'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="categoria_id" required>
+                        <option value="" disabled selected hidden>Categoría</option>
+                        <?php foreach ($catalogos['categorias'] as $c): ?>
+                            <option value="<?= $c['id'] ?>"><?= $c['nombre'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
 
-                <select name="proveedor_id" required>
-                    <option value="" disabled selected hidden>Proveedor</option>
-                    <?php foreach ($catalogos['proveedores'] as $p): ?>
-                        <option value="<?= $p['id'] ?>"><?= $p['nombre'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="subcategoria_id" required>
+                        <option value="" disabled selected hidden>Subcategoría</option>
+                        <?php foreach ($catalogos['subcategorias'] as $s): ?>
+                            <option value="<?= $s['id'] ?>"><?= $s['nombre'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
 
-                <select name="bodega_id" required>
-                    <option value="" disabled selected hidden>Bodega</option>
-                    <?php foreach ($catalogos['bodegas'] as $b): ?>
-                        <option value="<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="proveedor_id" required>
+                        <option value="" disabled selected hidden>Proveedor</option>
+                        <?php foreach ($catalogos['proveedores'] as $p): ?>
+                            <option value="<?= $p['id'] ?>"><?= $p['nombre'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
 
-                <select name="estado" required>
-                    <option value="" disabled selected hidden>Estado</option>
-                    <option value="1">Activo</option>
-                    <option value="0">Inactivo</option>
-                </select>
+                    <!-- Este sí estará lleno -->
+                    <select name="bodega_id" required>
+                        <option value="" disabled selected hidden>Bodega</option>
+                        <?php foreach ($catalogos['bodegas'] as $b): ?>
+                            <option value="<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
 
-                <div class="form-actions">
-                    <button type="submit">Guardar</button>
-                    <button type="button" onclick="closeModal('addModal')">Cancelar</button>
-                </div>
-            </form>
+                    <select name="estado" required>
+                        <option value="" disabled selected hidden>Estado</option>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+
+                    <div class="form-actions">
+                        <button type="submit">Guardar</button>
+                        <button type="button" onclick="closeModal('addModal')">Cancelar</button>
+                    </div>
+                </form>
+
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Modal Eliminar -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('deleteModal')">&times;</span>
-        <div class="form-container">
-            <h2>Eliminar Producto</h2>
-            <form method="post" action="./controller/inventorycontroller.php">
-                <input type="hidden" name="action" value="delete">
-                <input type="text" name="codigo" placeholder="Código del producto" required>
-                <div class="form-actions">
-                    <button type="submit" class="delete">Eliminar</button>
-                    <button type="button" onclick="closeModal('deleteModal')">Cancelar</button>
-                </div>
-            </form>
+    <!-- Modal Eliminar -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <div class="form-container">
+                <h2>Eliminar Producto</h2>
+                <form method="post" action="./controller/inventorycontroller.php">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="text" name="codigo" placeholder="Código del producto" required>
+                    <div class="form-actions">
+                        <button type="submit" class="delete">Eliminar</button>
+                        <button type="button" onclick="closeModal('deleteModal')">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 <?php endif; ?>
 
 <script>
