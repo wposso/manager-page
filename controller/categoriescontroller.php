@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../functions/getcategories.php';
-require_once __DIR__ . '/../functions/logger.php'; // Registro de logs
+require_once __DIR__ . '/../functions/logger.php';
 require_once __DIR__ . '/../database/dbconnection.php';
+
 session_start();
 
 function handlecategories()
@@ -16,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario_id = $_SESSION['usuario_id'] ?? null;
 
     if ($accion === 'agregar') {
-        $nombre = $conn->real_escape_string($_POST['nombre']);
-        $descripcion = $conn->real_escape_string($_POST['descripcion']);
-        $estado = (int) $_POST['estado'];
+        $nombre = $conn->real_escape_string($_POST['nombre'] ?? '');
+        $descripcion = $conn->real_escape_string($_POST['descripcion'] ?? '');
+        $estado = (int) ($_POST['estado'] ?? 1);
 
         $stmt = $conn->prepare("INSERT INTO categoria (nombre, descripcion, estado, creado_en, actualizado_en) VALUES (?, ?, ?, NOW(), NOW())");
         $stmt->bind_param("ssi", $nombre, $descripcion, $estado);
@@ -31,14 +32,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $msg = $success ? "Categoría agregada exitosamente." : "Ocurrió un error al agregar la categoría.";
+
         echo "<script>
-            window.location.href = '../server.php#Categorías::" . urlencode($msg) . "';
+            alert('$msg');
+            window.location.href = '../server.php#Categorias';
         </script>";
         exit;
     }
 
     if ($accion === 'eliminar') {
-        $identificador = $conn->real_escape_string($_POST['identificador']);
+        $identificador = $conn->real_escape_string($_POST['identificador'] ?? '');
         $isNumeric = is_numeric($identificador);
 
         if ($isNumeric) {
@@ -60,9 +63,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->close();
 
         $msg = $success ? "Categoría eliminada correctamente." : "No se pudo eliminar la categoría.";
+
         echo "<script>
-            window.location.href = '../server.php#Categorías::" . urlencode($msg) . "';
+            alert('$msg');
+            window.location.href = '../server.php#Categorias';
         </script>";
         exit;
     }
+
+    // Si llega aquí sin acción válida
+    $conn->close();
+    echo "<script>
+        alert('Acción no válida.');
+        window.location.href = '../server.php#Categorias';
+    </script>";
+    exit;
 }

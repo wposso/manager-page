@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../database/dbconnection.php';
 require_once __DIR__ . '/../functions/getwarehouses.php';
-// Opcional: require_once __DIR__ . '/../functions/log.php';  // si quieres registrar logs
+// require_once __DIR__ . '/../functions/log.php';
 
 function getWarehouses()
 {
@@ -27,11 +27,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("ss", $nombre, $ubicacion);
             $success = $stmt->execute();
             $stmt->close();
+            $conn->close();
 
             $msg = $success ? "Bodega registrada correctamente." : "Error al registrar la bodega.";
+
             // if ($success) logAction($_SESSION['usuario_id'], "Registró bodega: $nombre");
+
+            echo "<script>
+                alert('$msg');
+                window.location.href = '../server.php#Administrador';
+            </script>";
+            exit;
         } else {
             $msg = "Todos los campos son obligatorios para registrar una bodega.";
+            echo "<script>
+                alert('$msg');
+                window.location.href = '../server.php#Administrador';
+            </script>";
+            exit;
         }
     }
 
@@ -49,15 +62,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $success = $stmt->execute();
             $stmt->close();
+            $conn->close();
 
             $msg = $success ? "Bodega eliminada correctamente." : "Error al eliminar la bodega.";
+
             // if ($success) logAction($_SESSION['usuario_id'], "Eliminó bodega: $identificador");
+
+            echo "<script>
+                alert('$msg');
+                window.location.href = '../server.php#Administrador';
+            </script>";
+            exit;
         } else {
+            $conn->close();
             $msg = "Debes indicar el ID o nombre de la bodega a eliminar.";
+            echo "<script>
+                alert('$msg');
+                window.location.href = '../server.php#Administrador';
+            </script>";
+            exit;
         }
     }
 
+    // Por si llega sin acción válida
     $conn->close();
-    echo "<script>window.location.href = '../server.php#Administrador::" . urlencode($msg) . "';</script>";
-    exit();
+    echo "<script>
+        alert('Acción no válida.');
+        window.location.href = '../server.php#Administrador';
+    </script>";
+    exit;
 }

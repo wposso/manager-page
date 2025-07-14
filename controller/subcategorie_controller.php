@@ -5,8 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../functions/func_subcategorie.php';
 require_once __DIR__ . '/../database/dbconnection.php';
-// Opcional: para logs de acciones
-// require_once __DIR__ . '/../functions/log.php';
 
 function handlesubcategories()
 {
@@ -20,38 +18,34 @@ function getCategorias()
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['action'] ?? '';
-    $msg = '';
 
     if ($accion === 'add') {
-        $nombre = trim($_POST['nombre']);
-        $descripcion = trim($_POST['descripcion']);
-        $categoria_id = intval($_POST['categoria_id']);
-        $estado = intval($_POST['estado']);
+        $nombre = trim($_POST['nombre'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $categoria_id = intval($_POST['categoria_id'] ?? 0);
+        $estado = intval($_POST['estado'] ?? 1);
 
         $success = agregarSubcategoria($nombre, $descripcion, $categoria_id, $estado);
 
-        if ($success) {
-            $msg = 'Subcategoría registrada exitosamente.';
-            // logAction($_SESSION['usuario_id'], "Agregó subcategoría: $nombre");
-        } else {
-            $msg = 'Error al registrar subcategoría.';
-        }
+        $msg = $success ? 'Subcategoría registrada exitosamente.' : 'Error al registrar subcategoría.';
+
+        echo "<script>
+            alert('$msg');
+            window.location.href = '../server.php#Subcategorias';
+        </script>";
+        exit;
     }
 
     if ($accion === 'delete') {
-        $nombre = trim($_POST['nombre']);
+        $nombre = trim($_POST['nombre'] ?? '');
         $success = eliminarSubcategoria($nombre);
 
-        if ($success) {
-            $msg = 'Subcategoría eliminada correctamente.';
-            // logAction($_SESSION['usuario_id'], "Eliminó subcategoría: $nombre");
-        } else {
-            $msg = 'No se encontró la subcategoría o error al eliminar.';
-        }
-    }
+        $msg = $success ? 'Subcategoría eliminada correctamente.' : 'No se encontró la subcategoría o error al eliminar.';
 
-    echo "<script>
-        window.location.href = '../server.php#Subcategorías::" . urlencode($msg) . "';
-    </script>";
-    exit;
+        echo "<script>
+            alert('$msg');
+            window.location.href = '../server.php#Subcategorias';
+        </script>";
+        exit;
+    }
 }

@@ -4,9 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../database/dbconnection.php';
-// Opcional si vas a usar logs: require_once __DIR__ . '/../functions/log.php';
 
-// Control de acceso
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] === 'operador') {
     http_response_code(403);
     exit("Acción no autorizada.");
@@ -30,8 +28,6 @@ function handlesuppliers()
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
     $conn = db_connect();
-    $msg = '';
-    $success = false;
 
     if ($accion === 'agregar') {
         $nombre = $conn->real_escape_string($_POST['nombre'] ?? '');
@@ -46,12 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = $stmt->execute();
         $stmt->close();
 
-        if ($success) {
-            $msg = 'Proveedor registrado exitosamente.';
-            // logAction($_SESSION['usuario_id'], "Agregó proveedor: $nombre");
-        } else {
-            $msg = 'Error al registrar proveedor.';
-        }
+        $msg = $success ? 'Proveedor registrado exitosamente.' : 'Error al registrar proveedor.';
+        echo "<script>alert('$msg'); window.location.href = '../server.php#Proveedores';</script>";
+        exit;
     }
 
     if ($accion === 'eliminar') {
@@ -68,17 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = $stmt->execute();
         $stmt->close();
 
-        if ($success) {
-            $msg = 'Proveedor eliminado exitosamente.';
-            // logAction($_SESSION['usuario_id'], "Eliminó proveedor ID/NIT: $identificador");
-        } else {
-            $msg = 'Error al eliminar proveedor.';
-        }
+        $msg = $success ? 'Proveedor eliminado exitosamente.' : 'Error al eliminar proveedor.';
+        echo "<script>alert('$msg'); window.location.href = '../server.php#Proveedores';</script>";
+        exit;
     }
 
     $conn->close();
-    echo "<script>
-        window.location.href = '../server.php#Proveedores::" . urlencode($msg) . "';
-    </script>";
-    exit;
 }

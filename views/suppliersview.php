@@ -155,13 +155,11 @@ $btnAttr = $disabled['attr'];
     window.addEventListener('DOMContentLoaded', () => {
         const hash = window.location.hash;
         if (hash.includes('Proveedores::')) {
-            const parts = hash.split('::');
-            try {
-                const alertData = JSON.parse(decodeURIComponent(parts[1]));
-                showAlert(alertData.title, alertData.message, alertData.type);
-            } catch (e) {
-                console.error("Alerta mal formateada:", e);
+            const mensajePlano = decodeURIComponent(hash.split('::')[1] || '');
+            if (mensajePlano.trim()) {
+                alert(mensajePlano);
             }
+            // Limpiar el hash para evitar repetición
             history.replaceState(null, '', window.location.pathname);
         }
     });

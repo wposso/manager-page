@@ -129,4 +129,18 @@ $categorias = getCategorias();
             if (e.target === modal) modal.style.display = "none";
         });
     };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash;
+        if (hash.includes('Subcategorias::')) {
+            const parts = hash.split('::');
+            if (parts.length > 1) {
+                const mensaje = decodeURIComponent(parts[1]);
+                alert(mensaje); // ✅ o usa showAlert() si quieres el formato personalizado
+            }
+            // Limpia el hash para evitar recarga con alerta repetida
+            history.replaceState(null, '', window.location.pathname);
+        }
+    });
+
 </script>

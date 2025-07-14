@@ -4,7 +4,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../database/dbconnection.php';
-// Opcional: incluir logger
 // require_once __DIR__ . '/../functions/log.php';
 
 function getProjects()
@@ -27,17 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['action'] ?? '';
 
     if ($accion === 'add') {
-        $nombre = $conn->real_escape_string($_POST['nombre']);
-        $ubicacion = $conn->real_escape_string($_POST['ubicacion']);
+        $nombre = $conn->real_escape_string($_POST['nombre'] ?? '');
+        $ubicacion = $conn->real_escape_string($_POST['ubicacion'] ?? '');
 
         $stmt = $conn->prepare("INSERT INTO proyecto (nombre, ubicacion, creado_en, actualizado_en) VALUES (?, ?, NOW(), NOW())");
         $stmt->bind_param("ss", $nombre, $ubicacion);
         $success = $stmt->execute();
+        $stmt->close();
+        $conn->close();
 
         // logAction($_SESSION['usuario_id'], "Agregó proyecto: $nombre");
 
         $msg = $success ? "Proyecto registrado correctamente." : "Error al registrar proyecto.";
-        echo "<script>window.location.href = '../server.php#Administrador::" . urlencode($msg) . "';</script>";
+
+        echo "<script>
+            alert('$msg');
+            window.location.href = '../server.php#Administrador';
+        </script>";
         exit;
     }
 
@@ -55,15 +60,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $success = $stmt->execute();
-
-            // logAction($_SESSION['usuario_id'], "Eliminó proyecto: $identificador");
-
             $stmt->close();
         }
 
         $conn->close();
+        // logAction($_SESSION['usuario_id'], "Eliminó proyecto: $identificador");
+
         $msg = $success ? "Proyecto eliminado correctamente." : "Error al eliminar proyecto.";
-        echo "<script>window.location.href = '../server.php#Administrador::" . urlencode($msg) . "';</script>";
+
+        echo "<script>
+            alert('$msg');
+            window.location.href = '../server.php#Administrador';
+        </script>";
         exit;
     }
 }

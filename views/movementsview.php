@@ -39,6 +39,7 @@ $movimientos = handlemovements();
                     <th>Tipo</th>
                     <th>Producto</th>
                     <th>Cantidad</th>
+                    <th>Responsable</th>
                     <th>Fecha</th>
                     <th>Observación</th>
                 </tr>
@@ -46,27 +47,38 @@ $movimientos = handlemovements();
             <tbody>
                 <?php foreach ($movimientos as $m): ?>
                     <tr>
-                        <td><?= $m["id"] ?></td>
+                        <td><?= htmlspecialchars($m["id"]) ?></td>
                         <td><?= ucfirst(strtolower($m["tipo"])) ?></td>
-                        <td><?= $m["producto"] ?></td>
-                        <td><?= $m["cantidad"] ?></td>
-                        <td><?= $m["fecha"] ?></td>
+                        <td><?= htmlspecialchars($m["producto"]) ?></td>
+                        <td><?= htmlspecialchars($m["cantidad"]) ?></td>
+                        <td><?= htmlspecialchars($m["responsable_nombre"]) ?></td>
+                        <td><?= htmlspecialchars($m["fecha"]) ?></td>
                         <td>
                             <?php
-                            $info = [];
-                            if ($m["bodega_origen"])
-                                $info[] = "Origen: " . $m["bodega_origen"];
-                            if ($m["bodega_destino"])
-                                $info[] = "Destino: " . $m["bodega_destino"];
-                            if ($m["motivo"])
-                                $info[] = "Motivo: " . $m["motivo"];
-                            echo implode("<br>", $info);
+                            $observaciones = [];
+
+                            if (!empty($m["bodega_origen"])) {
+                                $observaciones[] = "Origen: " . htmlspecialchars($m["bodega_origen"]);
+                            } elseif (!empty($m["proyecto_origen"])) {
+                                $observaciones[] = "Origen: " . htmlspecialchars($m["proyecto_origen"]);
+                            }
+
+                            if (!empty($m["bodega_destino"])) {
+                                $observaciones[] = "Destino: " . htmlspecialchars($m["bodega_destino"]);
+                            } elseif (!empty($m["proyecto_destino"])) {
+                                $observaciones[] = "Destino: " . htmlspecialchars($m["proyecto_destino"]);
+                            }
+
+                            if (!empty($m["motivo"])) {
+                                $observaciones[] = "Motivo: " . htmlspecialchars($m["motivo"]);
+                            }
+
+                            echo implode("<br>", $observaciones);
                             ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-
         </table>
     </div>
 

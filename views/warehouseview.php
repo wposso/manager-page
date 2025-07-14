@@ -72,7 +72,8 @@ $bodega_nombre = getBodegaName($bodega_id);
                     <td><?= $p['categoria'] ?></td>
                     <td><?= $p['subcategoria'] ?></td>
                     <td><?= $p['proveedor'] ?></td>
-                    <td><?= $p['bodega'] ?></td>
+                    <!-- <td><?= $p['bodega'] ?></td> -->
+                    <td><?= $p['ubicacion'] ?? 'Sin ubicación' ?></td>
                     <td><?= $p['cantidad'] ?></td>
                     <td><?= $p['estado'] ? 'Activo' : 'Inactivo' ?></td>
                 </tr>
@@ -180,18 +181,32 @@ $bodega_nombre = getBodegaName($bodega_id);
                         <?php endforeach; ?>
                     </select>
 
-                    <select name="bodega_origen_id" required>
-                        <option value="" disabled selected hidden>Bodega origen</option>
-                        <?php foreach ($catalogos['bodegas'] as $b): ?>
-                            <option value="<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
-                        <?php endforeach; ?>
+                    <select name="origen_tipo_id" required>
+                        <option value="" disabled selected hidden>Origen</option>
+                        <optgroup label="Bodegas">
+                            <?php foreach ($catalogos['bodegas'] as $b): ?>
+                                <option value="bodega_<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                        <optgroup label="Proyectos">
+                            <?php foreach ($catalogos['proyectos'] as $p): ?>
+                                <option value="proyecto_<?= $p['id'] ?>"><?= $p['nombre'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
                     </select>
 
-                    <select name="bodega_destino_id" required>
-                        <option value="" disabled selected hidden>Bodega destino</option>
-                        <?php foreach ($catalogos['bodegas'] as $b): ?>
-                            <option value="<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
-                        <?php endforeach; ?>
+                    <select name="destino_tipo_id" required>
+                        <option value="" disabled selected hidden>Destino</option>
+                        <optgroup label="Bodegas">
+                            <?php foreach ($catalogos['bodegas'] as $b): ?>
+                                <option value="bodega_<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                        <optgroup label="Proyectos">
+                            <?php foreach ($catalogos['proyectos'] as $p): ?>
+                                <option value="proyecto_<?= $p['id'] ?>"><?= $p['nombre'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
                     </select>
 
                     <input type="number" name="cantidad" placeholder="Cantidad a transferir" required min="1">

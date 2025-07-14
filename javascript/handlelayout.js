@@ -27,6 +27,7 @@ function handleLoadView(viewPath) {
     .finally(() => {
       setTimeout(() => {
         loader.style.display = "none";
+        checkAndShowAlert(); // ✅ MOSTRAR ALERTA DESPUÉS DE CARGAR LA VISTA
       }, 200);
     });
 }
@@ -87,9 +88,9 @@ function getViewFromHash() {
       return "suppliersview.php";
     case "Administrador":
       return "administrator_view.php";
-    case "Categorías":
+    case "Categorias":
       return "categoriesview.php";
-    case "Subcategorías":
+    case "Subcategorias":
       return "subcategorie_view.php";
     case "Movimientos":
       return "movementsview.php";
@@ -109,3 +110,17 @@ function resolveViewFromHash() {
 
 window.addEventListener("DOMContentLoaded", resolveViewFromHash);
 window.addEventListener("hashchange", resolveViewFromHash);
+
+// ✅ FUNCIÓN NUEVA para mostrar alertas simples almacenadas
+function checkAndShowAlert() {
+  const alerta = localStorage.getItem("alerta");
+  if (alerta) {
+    try {
+      const data = JSON.parse(alerta);
+      alert(`${data.title}\n${data.message}`);
+    } catch (e) {
+      console.warn("Error mostrando alerta:", e);
+    }
+    localStorage.removeItem("alerta");
+  }
+}

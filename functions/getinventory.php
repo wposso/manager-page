@@ -10,12 +10,13 @@ function getAllProducts()
             c.nombre AS categoria,
             s.nombre AS subcategoria,
             p.nombre AS proveedor,
-            b.nombre AS bodega
+            COALESCE(b.nombre, pr.nombre) AS ubicacion
         FROM inventario i
         JOIN categoria c ON i.categoria_id = c.id
         JOIN subcategoria s ON i.subcategoria_id = s.id
         JOIN proveedor p ON i.proveedor_id = p.id
-        JOIN bodega b ON i.bodega_id = b.id
+        LEFT JOIN bodega b ON i.bodega_id = b.id
+        LEFT JOIN proyecto pr ON i.proyecto_id = pr.id
         ORDER BY i.id DESC
     ";
     $result = $conn->query($sql);
@@ -33,11 +34,11 @@ function addProduct($data)
     $stmt = $conn->prepare("
         INSERT INTO inventario (
             codigo, nombre, cantidad, categoria_id, subcategoria_id,
-            proveedor_id, bodega_id, estado, creado_en, actualizado_en
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            proveedor_id, bodega_id, proyecto_id, estado, creado_en, actualizado_en
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     ");
     $stmt->bind_param(
-        "ssiissii",
+        "ssiiiiiii",
         $data['codigo'],
         $data['nombre'],
         $data['cantidad'],
@@ -45,6 +46,7 @@ function addProduct($data)
         $data['subcategoria_id'],
         $data['proveedor_id'],
         $data['bodega_id'],
+        $data['proyecto_id'],
         $data['estado']
     );
     $success = $stmt->execute();
@@ -124,12 +126,13 @@ function getProductsByProject($proyecto_id)
                c.nombre AS categoria, 
                s.nombre AS subcategoria, 
                p.nombre AS proveedor, 
-               b.nombre AS bodega
+               COALESCE(b.nombre, pr.nombre) AS ubicacion
         FROM inventario i
         JOIN categoria c ON i.categoria_id = c.id
         JOIN subcategoria s ON i.subcategoria_id = s.id
         JOIN proveedor p ON i.proveedor_id = p.id
-        JOIN bodega b ON i.bodega_id = b.id
+        LEFT JOIN bodega b ON i.bodega_id = b.id
+        LEFT JOIN proyecto pr ON i.proyecto_id = pr.id
         WHERE i.proyecto_id = ?
     ");
     $stmt->bind_param("i", $proyecto_id);
@@ -142,6 +145,8 @@ function getProductsByProject($proyecto_id)
         $productos[] = $row;
     }
 
+    $stmt->close();
+    $conn->close();
     return $productos;
 }
 
@@ -153,6 +158,8 @@ function getProjectName($proyecto_id)
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
+    $stmt->close();
+    $conn->close();
     return $row ? $row['nombre'] : "Proyecto Desconocido";
 }
 
@@ -164,12 +171,13 @@ function getProductsByBodega($bodega_id)
                c.nombre AS categoria, 
                s.nombre AS subcategoria, 
                p.nombre AS proveedor, 
-               b.nombre AS bodega
+               COALESCE(b.nombre, pr.nombre) AS ubicacion
         FROM inventario i
         JOIN categoria c ON i.categoria_id = c.id
         JOIN subcategoria s ON i.subcategoria_id = s.id
         JOIN proveedor p ON i.proveedor_id = p.id
-        JOIN bodega b ON i.bodega_id = b.id
+        LEFT JOIN bodega b ON i.bodega_id = b.id
+        LEFT JOIN proyecto pr ON i.proyecto_id = pr.id
         WHERE i.bodega_id = ? AND i.cantidad > 0
     ");
     $stmt->bind_param("i", $bodega_id);
@@ -182,6 +190,8 @@ function getProductsByBodega($bodega_id)
         $productos[] = $row;
     }
 
+    $stmt->close();
+    $conn->close();
     return $productos;
 }
 
@@ -193,5 +203,44 @@ function getBodegaName($bodega_id)
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
+    $stmt->close();
+    $conn->close();
     return $row ? $row['nombre'] : "Bodega Desconocida";
+}
+
+function getProductById($id)
+{
+    $conn = db_connect();
+    $stmt = $conn->prepare("SELECT * FROM inventario WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $producto = $res->fetch_assoc();
+    $stmt->close();
+    $conn->close();
+    return $producto;
+}
+
+function getProyectos()
+{
+    $conn = db_connect();
+    $sql = "SELECT id, nombre FROM proyecto";
+    $result = $conn->query($sql);
+    $proyectos = [];
+    while ($row = $result->fetch_assoc()) {
+        $proyectos[] = $row;
+    }
+    $conn->close();
+    return $proyectos;
+}
+
+function getCatalogosForSelects()
+{
+    return [
+        'categorias' => getCategorias(),
+        'subcategorias' => getSubcategorias(),
+        'proveedores' => getProveedores(),
+        'bodegas' => getBodegas(),
+        'proyectos' => getProyectos()
+    ];
 }

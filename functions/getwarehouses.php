@@ -13,5 +13,6 @@ function getAllWarehouses()
         $bodegas[] = $row;
     }
 
+    $conn->close();
     return $bodegas;
 }

@@ -258,8 +258,6 @@ $bodegas = getBodegas();
             }
         });
     </script>
-
-
 </body>
 
 </html>

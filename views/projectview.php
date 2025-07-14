@@ -72,7 +72,8 @@ $proyecto_nombre = getProjectName($proyecto_id);
                     <td><?= $p['categoria'] ?></td>
                     <td><?= $p['subcategoria'] ?></td>
                     <td><?= $p['proveedor'] ?></td>
-                    <td><?= $p['bodega'] ?></td>
+                    <!-- <td><?= $p['bodega'] ?></td> -->
+                    <td><?= $p['ubicacion'] ?? 'Sin ubicación' ?></td>
                     <td><?= $p['cantidad'] ?></td>
                     <td><?= $p['estado'] ? 'Activo' : 'Inactivo' ?></td>
                 </tr>
@@ -165,6 +166,8 @@ $proyecto_nombre = getProjectName($proyecto_id);
                 <h2>Transferir Inventario</h2>
                 <form method="post" action="./controller/inventorycontroller.php">
                     <input type="hidden" name="action" value="transfer">
+                    <input type="hidden" name="origen_tipo_id" value="proyecto_<?= $proyecto_id ?>">
+                    <input type="hidden" name="redirect_to" value="#Transferencia::proyecto::<?= $proyecto_id ?>">
 
                     <select name="producto_id" required>
                         <option value="" disabled selected hidden>Selecciona el producto</option>
@@ -175,17 +178,13 @@ $proyecto_nombre = getProjectName($proyecto_id);
                         <?php endforeach; ?>
                     </select>
 
-                    <select name="bodega_origen_id" required>
-                        <option value="" disabled selected hidden>Bodega origen</option>
+                    <select name="destino_tipo_id" required>
+                        <option value="" disabled selected hidden>Seleccione destino</option>
                         <?php foreach ($catalogos['bodegas'] as $b): ?>
-                            <option value="<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
+                            <option value="bodega_<?= $b['id'] ?>">Bodega: <?= $b['nombre'] ?></option>
                         <?php endforeach; ?>
-                    </select>
-
-                    <select name="bodega_destino_id" required>
-                        <option value="" disabled selected hidden>Bodega destino</option>
-                        <?php foreach ($catalogos['bodegas'] as $b): ?>
-                            <option value="<?= $b['id'] ?>"><?= $b['nombre'] ?></option>
+                        <?php foreach ($catalogos['proyectos'] as $p): ?>
+                            <option value="proyecto_<?= $p['id'] ?>">Proyecto: <?= $p['nombre'] ?></option>
                         <?php endforeach; ?>
                     </select>
 
@@ -200,6 +199,7 @@ $proyecto_nombre = getProjectName($proyecto_id);
             </div>
         </div>
     </div>
+
 
 <?php endif; ?>
 

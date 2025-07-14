@@ -63,7 +63,8 @@ $btnAttr = $disabled['attr'];
                     <td><?= $p['categoria'] ?></td>
                     <td><?= $p['subcategoria'] ?></td>
                     <td><?= $p['proveedor'] ?></td>
-                    <td><?= $p['bodega'] ?></td>
+                    <!-- <td><?= $p['bodega'] ?></td> -->
+                     <td><?= $p['ubicacion'] ?? 'Sin ubicación' ?></td>
                     <td><?= $p['cantidad'] ?></td>
                     <td><?= $p['estado'] ? 'Activo' : 'Inactivo' ?></td>
                 </tr>
